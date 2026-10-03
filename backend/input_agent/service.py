@@ -1,21 +1,32 @@
-"""Small keyword parser for the V0.1 demo, not general language understanding.
+"""Offline rule-based fallback; no LLM, API key or network required.
 
-TODO: 后续由 AI Agent Owner 替换为真正 LLM Agent。
+This intentionally bounded parser is not general language understanding.
+Any future optional LLM must validate its JSON and fall back to these rules.
 """
 import re
+import unicodedata
+
+
+_EXCLUSION = re.compile(
+    r"(?:不想要|不想做|不想找|不要|排除|不考虑|不接受|避免)"
+    r"(.*?)"
+    r"(?=[,，。.;；!！?？\n\r]|但|不过|想找|希望|只要|要找|需要|$)"
+)
 
 
 def parse_user_request(text: str) -> dict[str, list[str]]:
     """Return categories, locations, keywords and exclude_keywords lists.
 
     Supports the four mock categories/cities and a fixed exclusion vocabulary.
-    Unknown terms are ignored; blank input raises ValueError.
+    Unknown terms are ignored; blank input returns empty lists.
+    Non-string input raises ValueError. See docs/input_output_changes.md.
     """
-    if not isinstance(text, str) or not text.strip():
-        raise ValueError("User request must be a nonempty string")
+    if not isinstance(text, str):
+        raise ValueError("User request must be a string")
+    text = unicodedata.normalize("NFKC", text).strip()
 
-    exclusions = re.findall(r"(?:不要|排除|不考虑)([^，。；！？\n]+)", text)
-    positive_text = re.sub(r"(?:不要|排除|不考虑)[^，。；！？\n]+", "", text)
+    exclusions = _EXCLUSION.findall(text)
+    positive_text = _EXCLUSION.sub(" ", text)
     categories = [
         category for category, aliases in (
             ("金融实习", ("金融实习", "实习")),
@@ -25,8 +36,8 @@ def parse_user_request(text: str) -> dict[str, list[str]]:
         ) if any(alias in positive_text for alias in aliases)
     ]
     locations = [
-        city for city in ("广州", "深圳", "香港", "澳门")
-        if city in positive_text or "粤港澳" in positive_text
+        city for city, alias in (("广州", "广深"), ("深圳", "广深"), ("香港", "港澳"), ("澳门", "港澳"))
+        if city in positive_text or alias in positive_text or "粤港澳" in positive_text
     ]
     keywords = [word for word in ("金融", "量化", "投行", "研究", "科技") if word in positive_text]
     exclude_keywords = [

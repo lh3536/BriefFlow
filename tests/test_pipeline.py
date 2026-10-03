@@ -26,8 +26,9 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(parse_user_request("我是金融专业大三学生，想找粤港澳金融实习，不要销售岗。"), PREFERENCE)
 
     def test_blank_input(self):
-        with self.assertRaises(ValueError):
-            parse_user_request("   ")
+        self.assertEqual(parse_user_request("   "), {
+            "categories": [], "locations": [], "keywords": [], "exclude_keywords": [],
+        })
 
     def test_mock_data_read(self):
         items = get_items(PREFERENCE)
@@ -82,7 +83,8 @@ class PipelineTests(unittest.TestCase):
 
     def test_json_output_contract(self):
         result = run_brief_flow(REQUEST)
-        self.assertEqual(set(result), {"preference", "total_items", "recommended_items"})
+        self.assertEqual(set(result), {"preference", "total_items", "recommended_items", "summary"})
+        self.assertIsInstance(result["summary"], str)
         self.assertEqual(result["total_items"], len(result["recommended_items"]))
         self.assertEqual(json.loads(json.dumps(result, ensure_ascii=False)), result)
         self.assertTrue(all(isinstance(values, list) for values in result["preference"].values()))
@@ -90,6 +92,7 @@ class PipelineTests(unittest.TestCase):
     def test_empty_output(self):
         self.assertEqual(build_brief(PREFERENCE, []), {
             "preference": PREFERENCE, "total_items": 0, "recommended_items": [],
+            "summary": "根据你的需求，本次未找到匹配信息，可尝试补充或调整需求。",
         })
         self.assertEqual(run_brief_flow("未识别的需求")["recommended_items"], [])
 
