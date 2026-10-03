@@ -1,0 +1,1 @@
+"""Deterministic ranking interface."""

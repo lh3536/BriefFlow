@@ -4,15 +4,16 @@ AI-powered personalized intelligence brief service.
 
 Current status:
 
-V0.1
+V0.1 Skeleton
 - Mock dataset complete
 - Data validation complete
 - Unit economics model complete
 - Automated finance tests complete
 - Frontend pending
-- Backend pending
-- Agent pending
-- Retrieval pending
+- Backend mock pipeline skeleton complete
+- Input / Output Agent rule-based skeleton complete; real LLM pending
+- Retrieval mock-data skeleton complete; database / web retrieval pending
+- Deterministic Ranking skeleton complete
 - Feedback pending
 
 ## Project Structure
@@ -26,6 +27,22 @@ V0.1
 - `docs/`: Product, architecture and competition documentation.
 
 Run the commands below from the repository root.
+
+## Run the Skeleton
+
+Python 3.10+, standard library only:
+
+```sh
+python backend/main.py
+python -m unittest discover -s tests -v
+```
+
+The demo request runs through Input Agent → Retrieval → Ranking → Output Agent,
+orchestrated by Router. The terminal shows the preference and top five mock
+recommendations. Frontend remains a placeholder.
+
+See [Architecture](docs/ARCHITECTURE.md) for interfaces and rule limitations,
+and [Team Handoff](docs/TEAM_HANDOFF.md) for module ownership.
 
 ---
 
