@@ -1,0 +1,257 @@
+[
+  {
+    "job_id": "job_001",
+    "title": "【模拟】投行分析实习",
+    "company": "虚构机构·BriefFlow示范01",
+    "location": "广州",
+    "category": "金融实习",
+    "deadline": "2026-10-20",
+    "link": "https://example.com/job_001",
+    "match_score": 92,
+    "why_recommended": [
+      "目标地点匹配（广州）+30",
+      "金融学专业与机会主题匹配+25",
+      "模拟设定接受大三本科生+15",
+      "职责与目标兴趣匹配且通过排除规则+10",
+      "以2026-10-03为基准按截止月份评估时效+12"
+    ]
+  },
+  {
+    "job_id": "job_002",
+    "title": "【模拟】行业研究实习",
+    "company": "虚构机构·BriefFlow示范02",
+    "location": "深圳",
+    "category": "金融实习",
+    "deadline": "2026-10-25",
+    "link": "https://example.com/job_002",
+    "match_score": 92,
+    "why_recommended": [
+      "目标地点匹配（深圳）+30",
+      "金融学专业与机会主题匹配+25",
+      "模拟设定接受大三本科生+15",
+      "职责与目标兴趣匹配且通过排除规则+10",
+      "以2026-10-03为基准按截止月份评估时效+12"
+    ]
+  },
+  {
+    "job_id": "job_003",
+    "title": "【模拟】资产管理实习",
+    "company": "虚构机构·BriefFlow示范03",
+    "location": "香港",
+    "category": "金融实习",
+    "deadline": "2026-11-05",
+    "link": "https://example.com/job_003",
+    "match_score": 88,
+    "why_recommended": [
+      "目标地点匹配（香港）+30",
+      "金融学专业与机会主题匹配+25",
+      "模拟设定接受大三本科生+15",
+      "职责与目标兴趣匹配且通过排除规则+10",
+      "以2026-10-03为基准按截止月份评估时效+8"
+    ]
+  },
+  {
+    "job_id": "job_004",
+    "title": "【模拟】风险管理实习",
+    "company": "虚构机构·BriefFlow示范04",
+    "location": "澳门",
+    "category": "金融实习",
+    "deadline": "2026-11-10",
+    "link": "https://example.com/job_004",
+    "match_score": 88,
+    "why_recommended": [
+      "目标地点匹配（澳门）+30",
+      "金融学专业与机会主题匹配+25",
+      "模拟设定接受大三本科生+15",
+      "职责与目标兴趣匹配且通过排除规则+10",
+      "以2026-10-03为基准按截止月份评估时效+8"
+    ]
+  },
+  {
+    "job_id": "job_005",
+    "title": "【模拟】量化研究实习",
+    "company": "虚构机构·BriefFlow示范05",
+    "location": "深圳",
+    "category": "金融实习",
+    "deadline": "2026-11-15",
+    "link": "https://example.com/job_005",
+    "match_score": 88,
+    "why_recommended": [
+      "目标地点匹配（深圳）+30",
+      "金融学专业与机会主题匹配+25",
+      "模拟设定接受大三本科生+15",
+      "职责与目标兴趣匹配且通过排除规则+10",
+      "以2026-10-03为基准按截止月份评估时效+8"
+    ]
+  },
+  {
+    "job_id": "job_006",
+    "title": "【模拟】金融科技产品实习",
+    "company": "虚构机构·BriefFlow示范06",
+    "location": "广州",
+    "category": "金融实习",
+    "deadline": "2026-11-20",
+    "link": "https://example.com/job_006",
+    "match_score": 88,
+    "why_recommended": [
+      "目标地点匹配（广州）+30",
+      "金融学专业与机会主题匹配+25",
+      "模拟设定接受大三本科生+15",
+      "职责与目标兴趣匹配且通过排除规则+10",
+      "以2026-10-03为基准按截止月份评估时效+8"
+    ]
+  },
+  {
+    "job_id": "job_007",
+    "title": "【模拟】金融数据分析实习",
+    "company": "虚构机构·BriefFlow示范07",
+    "location": "香港",
+    "category": "金融实习",
+    "deadline": "2026-11-25",
+    "link": "https://example.com/job_007",
+    "match_score": 88,
+    "why_recommended": [
+      "目标地点匹配（香港）+30",
+      "金融学专业与机会主题匹配+25",
+      "模拟设定接受大三本科生+15",
+      "职责与目标兴趣匹配且通过排除规则+10",
+      "以2026-10-03为基准按截止月份评估时效+8"
+    ]
+  },
+  {
+    "job_id": "job_008",
+    "title": "【模拟】资产管理运营实习",
+    "company": "虚构机构·BriefFlow示范08",
+    "location": "澳门",
+    "category": "金融实习",
+    "deadline": "2026-12-01",
+    "link": "https://example.com/job_008",
+    "match_score": 85,
+    "why_recommended": [
+      "目标地点匹配（澳门）+30",
+      "金融学专业与机会主题匹配+25",
+      "模拟设定接受大三本科生+15",
+      "职责与目标兴趣匹配且通过排除规则+10",
+      "以2026-10-03为基准按截止月份评估时效+5"
+    ]
+  },
+  {
+    "job_id": "job_009",
+    "title": "【模拟】企业战略分析实习",
+    "company": "虚构机构·BriefFlow示范09",
+    "location": "深圳",
+    "category": "金融实习",
+    "deadline": "2026-12-05",
+    "link": "https://example.com/job_009",
+    "match_score": 85,
+    "why_recommended": [
+      "目标地点匹配（深圳）+30",
+      "金融学专业与机会主题匹配+25",
+      "模拟设定接受大三本科生+15",
+      "职责与目标兴趣匹配且通过排除规则+10",
+      "以2026-10-03为基准按截止月份评估时效+5"
+    ]
+  },
+  {
+    "job_id": "job_010",
+    "title": "【模拟】企业估值案例挑战赛",
+    "company": "虚构机构·BriefFlow示范10",
+    "location": "广州",
+    "category": "经管比赛",
+    "deadline": "2026-10-28",
+    "link": "https://example.com/job_010",
+    "match_score": 92,
+    "why_recommended": [
+      "目标地点匹配（广州）+30",
+      "金融学专业与机会主题匹配+25",
+      "模拟设定接受大三本科生+15",
+      "职责与目标兴趣匹配且通过排除规则+10",
+      "以2026-10-03为基准按截止月份评估时效+12"
+    ]
+  },
+  {
+    "job_id": "job_011",
+    "title": "【模拟】绿色金融商业方案赛",
+    "company": "虚构机构·BriefFlow示范11",
+    "location": "澳门",
+    "category": "经管比赛",
+    "deadline": "2026-11-18",
+    "link": "https://example.com/job_011",
+    "match_score": 88,
+    "why_recommended": [
+      "目标地点匹配（澳门）+30",
+      "金融学专业与机会主题匹配+25",
+      "模拟设定接受大三本科生+15",
+      "职责与目标兴趣匹配且通过排除规则+10",
+      "以2026-10-03为基准按截止月份评估时效+8"
+    ]
+  },
+  {
+    "job_id": "job_012",
+    "title": "【模拟】金融研究夏令营预报名",
+    "company": "虚构机构·BriefFlow示范12",
+    "location": "香港",
+    "category": "夏令营",
+    "deadline": "2026-12-10",
+    "link": "https://example.com/job_012",
+    "match_score": 85,
+    "why_recommended": [
+      "目标地点匹配（香港）+30",
+      "金融学专业与机会主题匹配+25",
+      "模拟设定接受大三本科生+15",
+      "职责与目标兴趣匹配且通过排除规则+10",
+      "以2026-10-03为基准按截止月份评估时效+5"
+    ]
+  },
+  {
+    "job_id": "job_013",
+    "title": "【模拟】计量经济学夏令营预报名",
+    "company": "虚构机构·BriefFlow示范13",
+    "location": "广州",
+    "category": "夏令营",
+    "deadline": "2026-12-20",
+    "link": "https://example.com/job_013",
+    "match_score": 85,
+    "why_recommended": [
+      "目标地点匹配（广州）+30",
+      "金融学专业与机会主题匹配+25",
+      "模拟设定接受大三本科生+15",
+      "职责与目标兴趣匹配且通过排除规则+10",
+      "以2026-10-03为基准按截止月份评估时效+5"
+    ]
+  },
+  {
+    "job_id": "job_014",
+    "title": "【模拟】公司金融研究助理",
+    "company": "虚构机构·BriefFlow示范14",
+    "location": "深圳",
+    "category": "科研机会",
+    "deadline": "2026-10-30",
+    "link": "https://example.com/job_014",
+    "match_score": 92,
+    "why_recommended": [
+      "目标地点匹配（深圳）+30",
+      "金融学专业与机会主题匹配+25",
+      "模拟设定接受大三本科生+15",
+      "职责与目标兴趣匹配且通过排除规则+10",
+      "以2026-10-03为基准按截止月份评估时效+12"
+    ]
+  },
+  {
+    "job_id": "job_015",
+    "title": "【模拟】跨境金融研究助理",
+    "company": "虚构机构·BriefFlow示范15",
+    "location": "香港",
+    "category": "科研机会",
+    "deadline": "2026-12-31",
+    "link": "https://example.com/job_015",
+    "match_score": 85,
+    "why_recommended": [
+      "目标地点匹配（香港）+30",
+      "金融学专业与机会主题匹配+25",
+      "模拟设定接受大三本科生+15",
+      "职责与目标兴趣匹配且通过排除规则+10",
+      "以2026-10-03为基准按截止月份评估时效+5"
+    ]
+  }
+]
