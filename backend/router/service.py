@@ -11,3 +11,4 @@ def run_brief_flow(user_text: str) -> dict:
     items = get_items(preference)
     ranked_items = rank_items(preference, items)
     return build_brief(preference, ranked_items)
+
