@@ -34,10 +34,13 @@ class PipelineTests(unittest.TestCase):
         items = get_items(PREFERENCE)
         self.assertEqual(len(items), 15)
         self.assertEqual(items[0]["job_id"], "job_001")
-        self.assertEqual(set(items[0]), {
+        self.assertTrue({
             "job_id", "title", "company", "location", "category", "deadline",
             "link", "match_score", "why_recommended",
-        })
+        }.issubset(items[0]))
+        self.assertEqual(items[0]["source"], "BriefFlow Mock")
+        self.assertEqual(items[0]["source_url"], items[0]["link"])
+        self.assertEqual(items[0]["organization"], items[0]["company"])
 
     def test_exclusions_filter_actual_sales_content(self):
         # Existing mock data contains no sales roles: inject candidates to test exclusion.
