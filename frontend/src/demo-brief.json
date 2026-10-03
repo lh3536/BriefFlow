@@ -1,0 +1,405 @@
+{
+  "request": "我是金融专业大三学生，帮我找粤港澳金融实习，不要销售岗。",
+  "generated_on": "2026-10-04",
+  "brief": {
+    "preference": {
+      "categories": [
+        "金融实习"
+      ],
+      "locations": [
+        "广州",
+        "深圳",
+        "香港",
+        "澳门"
+      ],
+      "keywords": [
+        "金融"
+      ],
+      "exclude_keywords": [
+        "销售"
+      ]
+    },
+    "total_items": 9,
+    "recommended_items": [
+      {
+        "item_id": "job_001",
+        "title": "【模拟】投行分析实习",
+        "organization": "虚构机构·BriefFlow示范01",
+        "location": "广州",
+        "category": "金融实习",
+        "summary": "",
+        "source": "BriefFlow Mock",
+        "source_url": "https://example.com/job_001",
+        "published_at": "",
+        "deadline": "2026-10-20",
+        "last_updated": "2026-10-03T16:47:25.851374+00:00",
+        "tags": [],
+        "requirements": [],
+        "job_id": "job_001",
+        "company": "虚构机构·BriefFlow示范01",
+        "link": "https://example.com/job_001",
+        "match_score": 100.0,
+        "why_recommended": [
+          "地点匹配（广州）+40",
+          "类别匹配（金融实习）+40",
+          "关键词匹配（金融）+20"
+        ],
+        "priority_score": 80.0,
+        "priority_reasons": [
+          "匹配分 × 0.8+80"
+        ],
+        "score_breakdown": {
+          "match": {
+            "location": 40.0,
+            "category": 40.0,
+            "keyword": 20.0
+          },
+          "priority": {
+            "match": 80.0,
+            "deadline": 0,
+            "freshness": 0
+          }
+        },
+        "deadline_expired": false,
+        "final_rank": 1
+      },
+      {
+        "item_id": "job_002",
+        "title": "【模拟】行业研究实习",
+        "organization": "虚构机构·BriefFlow示范02",
+        "location": "深圳",
+        "category": "金融实习",
+        "summary": "",
+        "source": "BriefFlow Mock",
+        "source_url": "https://example.com/job_002",
+        "published_at": "",
+        "deadline": "2026-10-25",
+        "last_updated": "2026-10-03T16:47:25.851374+00:00",
+        "tags": [],
+        "requirements": [],
+        "job_id": "job_002",
+        "company": "虚构机构·BriefFlow示范02",
+        "link": "https://example.com/job_002",
+        "match_score": 100.0,
+        "why_recommended": [
+          "地点匹配（深圳）+40",
+          "类别匹配（金融实习）+40",
+          "关键词匹配（金融）+20"
+        ],
+        "priority_score": 80.0,
+        "priority_reasons": [
+          "匹配分 × 0.8+80"
+        ],
+        "score_breakdown": {
+          "match": {
+            "location": 40.0,
+            "category": 40.0,
+            "keyword": 20.0
+          },
+          "priority": {
+            "match": 80.0,
+            "deadline": 0,
+            "freshness": 0
+          }
+        },
+        "deadline_expired": false,
+        "final_rank": 2
+      },
+      {
+        "item_id": "job_003",
+        "title": "【模拟】资产管理实习",
+        "organization": "虚构机构·BriefFlow示范03",
+        "location": "香港",
+        "category": "金融实习",
+        "summary": "",
+        "source": "BriefFlow Mock",
+        "source_url": "https://example.com/job_003",
+        "published_at": "",
+        "deadline": "2026-11-05",
+        "last_updated": "2026-10-03T16:47:25.851374+00:00",
+        "tags": [],
+        "requirements": [],
+        "job_id": "job_003",
+        "company": "虚构机构·BriefFlow示范03",
+        "link": "https://example.com/job_003",
+        "match_score": 100.0,
+        "why_recommended": [
+          "地点匹配（香港）+40",
+          "类别匹配（金融实习）+40",
+          "关键词匹配（金融）+20"
+        ],
+        "priority_score": 80.0,
+        "priority_reasons": [
+          "匹配分 × 0.8+80"
+        ],
+        "score_breakdown": {
+          "match": {
+            "location": 40.0,
+            "category": 40.0,
+            "keyword": 20.0
+          },
+          "priority": {
+            "match": 80.0,
+            "deadline": 0,
+            "freshness": 0
+          }
+        },
+        "deadline_expired": false,
+        "final_rank": 3
+      },
+      {
+        "item_id": "job_004",
+        "title": "【模拟】风险管理实习",
+        "organization": "虚构机构·BriefFlow示范04",
+        "location": "澳门",
+        "category": "金融实习",
+        "summary": "",
+        "source": "BriefFlow Mock",
+        "source_url": "https://example.com/job_004",
+        "published_at": "",
+        "deadline": "2026-11-10",
+        "last_updated": "2026-10-03T16:47:25.851374+00:00",
+        "tags": [],
+        "requirements": [],
+        "job_id": "job_004",
+        "company": "虚构机构·BriefFlow示范04",
+        "link": "https://example.com/job_004",
+        "match_score": 100.0,
+        "why_recommended": [
+          "地点匹配（澳门）+40",
+          "类别匹配（金融实习）+40",
+          "关键词匹配（金融）+20"
+        ],
+        "priority_score": 80.0,
+        "priority_reasons": [
+          "匹配分 × 0.8+80"
+        ],
+        "score_breakdown": {
+          "match": {
+            "location": 40.0,
+            "category": 40.0,
+            "keyword": 20.0
+          },
+          "priority": {
+            "match": 80.0,
+            "deadline": 0,
+            "freshness": 0
+          }
+        },
+        "deadline_expired": false,
+        "final_rank": 4
+      },
+      {
+        "item_id": "job_005",
+        "title": "【模拟】量化研究实习",
+        "organization": "虚构机构·BriefFlow示范05",
+        "location": "深圳",
+        "category": "金融实习",
+        "summary": "",
+        "source": "BriefFlow Mock",
+        "source_url": "https://example.com/job_005",
+        "published_at": "",
+        "deadline": "2026-11-15",
+        "last_updated": "2026-10-03T16:47:25.851374+00:00",
+        "tags": [],
+        "requirements": [],
+        "job_id": "job_005",
+        "company": "虚构机构·BriefFlow示范05",
+        "link": "https://example.com/job_005",
+        "match_score": 100.0,
+        "why_recommended": [
+          "地点匹配（深圳）+40",
+          "类别匹配（金融实习）+40",
+          "关键词匹配（金融）+20"
+        ],
+        "priority_score": 80.0,
+        "priority_reasons": [
+          "匹配分 × 0.8+80"
+        ],
+        "score_breakdown": {
+          "match": {
+            "location": 40.0,
+            "category": 40.0,
+            "keyword": 20.0
+          },
+          "priority": {
+            "match": 80.0,
+            "deadline": 0,
+            "freshness": 0
+          }
+        },
+        "deadline_expired": false,
+        "final_rank": 5
+      },
+      {
+        "item_id": "job_006",
+        "title": "【模拟】金融科技产品实习",
+        "organization": "虚构机构·BriefFlow示范06",
+        "location": "广州",
+        "category": "金融实习",
+        "summary": "",
+        "source": "BriefFlow Mock",
+        "source_url": "https://example.com/job_006",
+        "published_at": "",
+        "deadline": "2026-11-20",
+        "last_updated": "2026-10-03T16:47:25.851374+00:00",
+        "tags": [],
+        "requirements": [],
+        "job_id": "job_006",
+        "company": "虚构机构·BriefFlow示范06",
+        "link": "https://example.com/job_006",
+        "match_score": 100.0,
+        "why_recommended": [
+          "地点匹配（广州）+40",
+          "类别匹配（金融实习）+40",
+          "关键词匹配（金融）+20"
+        ],
+        "priority_score": 80.0,
+        "priority_reasons": [
+          "匹配分 × 0.8+80"
+        ],
+        "score_breakdown": {
+          "match": {
+            "location": 40.0,
+            "category": 40.0,
+            "keyword": 20.0
+          },
+          "priority": {
+            "match": 80.0,
+            "deadline": 0,
+            "freshness": 0
+          }
+        },
+        "deadline_expired": false,
+        "final_rank": 6
+      },
+      {
+        "item_id": "job_007",
+        "title": "【模拟】金融数据分析实习",
+        "organization": "虚构机构·BriefFlow示范07",
+        "location": "香港",
+        "category": "金融实习",
+        "summary": "",
+        "source": "BriefFlow Mock",
+        "source_url": "https://example.com/job_007",
+        "published_at": "",
+        "deadline": "2026-11-25",
+        "last_updated": "2026-10-03T16:47:25.851374+00:00",
+        "tags": [],
+        "requirements": [],
+        "job_id": "job_007",
+        "company": "虚构机构·BriefFlow示范07",
+        "link": "https://example.com/job_007",
+        "match_score": 100.0,
+        "why_recommended": [
+          "地点匹配（香港）+40",
+          "类别匹配（金融实习）+40",
+          "关键词匹配（金融）+20"
+        ],
+        "priority_score": 80.0,
+        "priority_reasons": [
+          "匹配分 × 0.8+80"
+        ],
+        "score_breakdown": {
+          "match": {
+            "location": 40.0,
+            "category": 40.0,
+            "keyword": 20.0
+          },
+          "priority": {
+            "match": 80.0,
+            "deadline": 0,
+            "freshness": 0
+          }
+        },
+        "deadline_expired": false,
+        "final_rank": 7
+      },
+      {
+        "item_id": "job_008",
+        "title": "【模拟】资产管理运营实习",
+        "organization": "虚构机构·BriefFlow示范08",
+        "location": "澳门",
+        "category": "金融实习",
+        "summary": "",
+        "source": "BriefFlow Mock",
+        "source_url": "https://example.com/job_008",
+        "published_at": "",
+        "deadline": "2026-12-01",
+        "last_updated": "2026-10-03T16:47:25.851374+00:00",
+        "tags": [],
+        "requirements": [],
+        "job_id": "job_008",
+        "company": "虚构机构·BriefFlow示范08",
+        "link": "https://example.com/job_008",
+        "match_score": 100.0,
+        "why_recommended": [
+          "地点匹配（澳门）+40",
+          "类别匹配（金融实习）+40",
+          "关键词匹配（金融）+20"
+        ],
+        "priority_score": 80.0,
+        "priority_reasons": [
+          "匹配分 × 0.8+80"
+        ],
+        "score_breakdown": {
+          "match": {
+            "location": 40.0,
+            "category": 40.0,
+            "keyword": 20.0
+          },
+          "priority": {
+            "match": 80.0,
+            "deadline": 0,
+            "freshness": 0
+          }
+        },
+        "deadline_expired": false,
+        "final_rank": 8
+      },
+      {
+        "item_id": "job_009",
+        "title": "【模拟】企业战略分析实习",
+        "organization": "虚构机构·BriefFlow示范09",
+        "location": "深圳",
+        "category": "金融实习",
+        "summary": "",
+        "source": "BriefFlow Mock",
+        "source_url": "https://example.com/job_009",
+        "published_at": "",
+        "deadline": "2026-12-05",
+        "last_updated": "2026-10-03T16:47:25.851374+00:00",
+        "tags": [],
+        "requirements": [],
+        "job_id": "job_009",
+        "company": "虚构机构·BriefFlow示范09",
+        "link": "https://example.com/job_009",
+        "match_score": 100.0,
+        "why_recommended": [
+          "地点匹配（深圳）+40",
+          "类别匹配（金融实习）+40",
+          "关键词匹配（金融）+20"
+        ],
+        "priority_score": 80.0,
+        "priority_reasons": [
+          "匹配分 × 0.8+80"
+        ],
+        "score_breakdown": {
+          "match": {
+            "location": 40.0,
+            "category": 40.0,
+            "keyword": 20.0
+          },
+          "priority": {
+            "match": 80.0,
+            "deadline": 0,
+            "freshness": 0
+          }
+        },
+        "deadline_expired": false,
+        "final_rank": 9
+      }
+    ],
+    "summary": "根据你的需求，本次找到 9 条匹配信息，其中 9 条高度匹配。"
+  }
+}
