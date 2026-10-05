@@ -10,7 +10,7 @@ import xml.etree.ElementTree as ET
 
 from backend.retrieval.database import DEFAULT_DB_PATH, load_items, save_items
 from backend.retrieval.schema import deduplicate_items, normalize_item, to_pipeline_item, validate_item
-from backend.retrieval.sources import UKRI_SOURCE, fetch_ukri
+from backend.retrieval.sources import WEB_SOURCES, fetch_web
 
 LOGGER = logging.getLogger(__name__)
 MOCK_PATH = Path(__file__).resolve().parents[2] / "data" / "mock" / "mock_db.json"
@@ -48,7 +48,7 @@ def _retrieve(mode: str, db_path: Path) -> list[dict]:
     items = []
     status = "ok"
     try:
-        raw = {"mock": _read_mock, "database": lambda: load_items(db_path), "web": fetch_ukri}[mode]()
+        raw = {"mock": _read_mock, "database": lambda: load_items(db_path), "web": fetch_web}[mode]()
         fetched = len(raw)
         items, rejected, duplicates = clean_items(raw)
         if mode == "web" and items:
@@ -62,7 +62,7 @@ def _retrieve(mode: str, db_path: Path) -> list[dict]:
         raise
     finally:
         LOGGER.info("retrieval %s", json.dumps({
-            "source": {"mock": "BriefFlow Mock", "web": UKRI_SOURCE, "database": "SQLite"}[mode],
+            "source": {"mock": "BriefFlow Mock", "web": ",".join(WEB_SOURCES), "database": "SQLite"}[mode],
             "mode": mode, "items_fetched": fetched, "items_accepted": len(items),
             "items_rejected": rejected, "duplicates_removed": duplicates,
             "duration": round(perf_counter() - start, 6), "status": status,
