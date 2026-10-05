@@ -6,12 +6,19 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from backend.router.service import run_brief_flow
 
-# 页面设置
-st.set_page_config(page_title="BriefFlow 个人情报站", layout="wide")
+# 页面设置（恢复原生的配置，删除自定义 CSS）
+st.set_page_config(page_title="BriefFlow 个人情报站", page_icon="💼", layout="wide")
 
 # ---------------- 用户端界面 ----------------
-st.title("🔍 BriefFlow AI 情报站")
-st.markdown("### 一句话，创建属于你的 AI 情报站")
+st.title("🔍 BriefFlow")
+st.caption("一句话，创建属于你的 AI 情报站")
+
+# 侧边栏品牌区域（纯文本，极简稳定）
+with st.sidebar:
+    st.header("💼 BriefFlow")
+    st.caption("底层通用的个性化 AI 情报 Agent")
+    st.divider()
+    st.info("💡 修改输入，点击检索，Agent 会为你重新定制机会。")
 
 # 1. 用户输入
 user_query = st.text_input(
@@ -38,14 +45,18 @@ if st.session_state.get("has_searched", False):
 
     # 循环渲染卡片
     for item in result["recommended_items"][:show_count]:
+        # 使用 Streamlit 原生的带边框容器
         with st.container(border=True):
             col1, col2 = st.columns([3, 1])
             with col1:
+                # 回归原生组件，保证文字可见
                 st.subheader(f"{item['title']}")
                 st.caption(f"📍 {item['location']} | 📅 {item.get('deadline', '未注明')}")
             with col2:
+                # 使用原生 metric，稳定显示分数
                 st.metric(label="匹配分数", value=f"{item['match_score']}")
 
+            # 推荐理由展开框
             with st.expander("💡 为什么推荐给你？"):
                 for reason in item['why_recommended']:
                     st.write(f"- {reason}")
