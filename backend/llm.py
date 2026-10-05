@@ -59,7 +59,7 @@ def llm_available() -> bool:
     return bool(_config()["api_key"])
 
 
-def chat_completion(messages: list[dict], *, max_tokens: int = 512) -> str:
+def chat_completion(messages: list[dict], *, max_tokens: int = 4096) -> str:
     """Return the assistant message content; raises on any failure.
 
     Callers are responsible for validating the content and falling back to
@@ -68,12 +68,12 @@ def chat_completion(messages: list[dict], *, max_tokens: int = 512) -> str:
     cfg = _config()
     if not cfg["api_key"]:
         raise RuntimeError("LLM disabled: BRIEF_LLM_API_KEY is not set")
-    body = json.dumps({
+    payload = {
         "model": cfg["model"],
         "messages": messages,
-        "temperature": 0,
         "max_tokens": max_tokens,
-    }).encode("utf-8")
+    }
+    body = json.dumps(payload).encode("utf-8")
     request = urllib.request.Request(
         cfg["base_url"].rstrip("/") + "/chat/completions",
         data=body,

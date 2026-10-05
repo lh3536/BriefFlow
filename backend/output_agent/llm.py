@@ -67,7 +67,7 @@ def summarize_with_llm(
     ]
     for attempt in range(retries + 1):
         try:
-            content = chat_completion(messages, max_tokens=200).strip()
+            content = chat_completion(messages).strip()
         except Exception:
             if attempt >= retries:
                 return None
