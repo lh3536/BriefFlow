@@ -4,6 +4,18 @@ All tests mock the LLM client: no network, no API key, deterministic.
 The rule-based baseline must be identical whether the LLM is disabled,
 broken or returns garbage.
 """
+
+import os
+
+# 强制注入 Qwen 的配置（绝对管用，不用找 PyCharm 配置了）
+os.environ["BRIEF_LLM_API_KEY"] = "sk-ws-H.PRXHYLP.PHuy.MEUCIDXapZ9Xr7hMLwEWSpgrZlKgNCW1KffGfTn2ZRwWJqW5AiEAhXkpy9hxx_Mtsfu49CuunmxS-ZyparXn2rP9Iz1T2V8"
+os.environ["BRIEF_LLM_BASE_URL"] = "https://ws-988k3gpo8q43jq4e.cn-beijing.maas.aliyuncs.com/compatible-mode/v1"
+os.environ["BRIEF_LLM_MODEL"] = "qwen3.7-plus"
+os.environ["BRIEF_LLM_TIMEOUT"] = "20"
+
+from backend.input_agent.llm import parse_with_llm
+from backend.router.service import run_brief_flow
+
 import json
 import unittest
 from unittest.mock import patch

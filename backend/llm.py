@@ -17,8 +17,8 @@ import os
 from pathlib import Path
 import urllib.request
 
-_DEFAULT_BASE_URL = "https://api.openai.com/v1"
-_DEFAULT_MODEL = "gpt-4o-mini"
+_DEFAULT_BASE_URL = "https://ws-988k3gpo8q43jq4e.cn-beijing.maas.aliyuncs.com/compatible-mode/v1"
+_DEFAULT_MODEL = "qwen3.7-plus"
 _DEFAULT_TIMEOUT = 8.0
 
 
