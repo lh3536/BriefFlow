@@ -2,19 +2,21 @@
 
 AI-powered personalized intelligence brief service.
 
-Current status:
+Current demo: root Streamlit `app.py` → Python Router → Input Agent → Retrieval →
+Ranking → Output Agent. Optional LLM preference understanding and summary have
+rule/deterministic fallback. FastAPI and historical React remain available.
 
-V0.1 Skeleton
-- Mock dataset complete
-- Data validation complete
-- Unit economics model complete
-- Automated finance tests complete
-- Frontend pending
-- Backend mock pipeline skeleton complete
-- Input / Output Agent rule-based skeleton complete; real LLM pending
-- Retrieval mock-data skeleton complete; database / web retrieval pending
-- Deterministic Ranking skeleton complete
-- Feedback pending
+## Run the Streamlit demo
+
+```sh
+python -m pip install -r requirements.txt
+python -m streamlit run app.py
+```
+
+No FastAPI server is required. Copy `.env.example` to `.env` for optional LLM
+configuration. Without a key, the full demo works with rule-based understanding.
+Default retrieval uses explicitly labeled Demo / Mock Data.
+See [Agent configuration and integration checks](docs/AGENT_LLM.md).
 
 ## Project Structure
 
@@ -39,7 +41,7 @@ python -m unittest discover -s tests -v
 
 The demo request runs through Input Agent → Retrieval → Ranking → Output Agent,
 orchestrated by Router. The terminal shows the preference and top five mock
-recommendations. Frontend remains a placeholder.
+recommendations. The Streamlit UI renders the same Router result.
 
 See [Architecture](docs/ARCHITECTURE.md) for interfaces and rule limitations,
 and [Team Handoff](docs/TEAM_HANDOFF.md) for module ownership.
