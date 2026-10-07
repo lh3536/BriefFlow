@@ -8,7 +8,8 @@ Configuration via environment variables or a repo-root .env file:
     BRIEF_LLM_API_KEY   - required to enable; missing means LLM disabled
     BRIEF_LLM_BASE_URL  - OpenAI-compatible endpoint, default https://api.openai.com/v1
     BRIEF_LLM_MODEL     - default gpt-4o-mini
-    BRIEF_LLM_TIMEOUT   - request timeout in seconds, default 8
+    BRIEF_LLM_TIMEOUT   - request timeout in seconds, default 30
+    BRIEF_LLM_TEMPERATURE - optional temperature; omitted by default (some models reject 0)
 """
 from __future__ import annotations
 
@@ -20,7 +21,7 @@ import urllib.request
 
 _DEFAULT_BASE_URL = "https://api.openai.com/v1"
 _DEFAULT_MODEL = "gpt-4o-mini"
-_DEFAULT_TIMEOUT = 8.0
+_DEFAULT_TIMEOUT = 30.0
 
 
 def _load_dotenv() -> None:
@@ -37,7 +38,7 @@ def _load_dotenv() -> None:
         key, _, value = line.partition("=")
         key = key.strip()
         value = value.strip().strip('"').strip("'")
-        if key in {"BRIEF_LLM_API_KEY", "BRIEF_LLM_BASE_URL", "BRIEF_LLM_MODEL", "BRIEF_LLM_TIMEOUT"} and key not in os.environ:
+        if key in {"BRIEF_LLM_API_KEY", "BRIEF_LLM_BASE_URL", "BRIEF_LLM_MODEL", "BRIEF_LLM_TIMEOUT", "BRIEF_LLM_TEMPERATURE"} and key not in os.environ:
             os.environ[key] = value
 
 
@@ -76,6 +77,12 @@ def chat_completion(messages: list[dict], *, max_tokens: int = 4096) -> str:
         "messages": messages,
         "max_tokens": max_tokens,
     }
+    temperature = os.environ.get("BRIEF_LLM_TEMPERATURE", "").strip()
+    if temperature:
+        try:
+            payload["temperature"] = float(temperature)
+        except ValueError:
+            pass
     body = json.dumps(payload).encode("utf-8")
     request = urllib.request.Request(
         cfg["base_url"].rstrip("/") + "/chat/completions",

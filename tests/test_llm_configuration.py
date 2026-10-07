@@ -19,7 +19,7 @@ class LLMConfigurationTests(unittest.TestCase):
     def test_invalid_timeouts_default(self):
         for timeout in ('0', '-1', 'nan', 'inf', 'invalid'):
             with self.subTest(timeout=timeout), patch.dict(os.environ, {'BRIEF_LLM_TIMEOUT': timeout}):
-                self.assertEqual(_config()['timeout'], 8.0)
+                self.assertEqual(_config()['timeout'], 30.0)
 
     def test_unreadable_dotenv_is_optional(self):
         with patch.dict(os.environ, {'BRIEF_LLM_API_KEY': ''}), patch.object(Path, 'read_text', side_effect=UnicodeError()):

@@ -1,7 +1,7 @@
 # AO Agent LLM 增强说明（第二轮）
 
 > 适用范围：`backend/input_agent` + `backend/output_agent`（AO：理解用户输入 + 输出整合）。
-> 本文档补充 `input_output_changes.md`；**数据/API Contract 没有任何变化**。
+> 本文档补充 `input_output_changes.md`；原有 Preference / Item 契约不变，Output 契约**新增 `summary_mode` 字段**用于标识摘要来源。
 
 ## 设计：规则为底，LLM 增强
 
@@ -68,6 +68,12 @@ LLM 路径的测试全部 mock（`tests/test_agent_llm.py`），不联网、不�
 - 并集策略下 LLM 无法"纠正"规则误识别（如规则把"客服经验分享会"误判为排除客服）。
 - Token 用量尚未接入统计（等 Nolan 的编排器/AgentRun 接口后对接）。
 - 输出摘要的语言风格、是否分条，待与 Nolan 前端确认展示形态后再调。
+
+## 配置补充
+
+新增可选环境变量：
+- `BRIEF_LLM_TEMPERATURE`：可选；默认不传；若设置则作为模型 temperature 参数。
+  注意 kimi-k2.6 等部分模型只接受 `1`，传 `0` 会报 400。
 
 ## Streamlit integration demo
 

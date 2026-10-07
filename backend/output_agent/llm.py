@@ -11,7 +11,7 @@ import json
 
 from backend.llm import chat_completion, llm_available
 
-_MAX_SUMMARY_LENGTH = 120
+_MAX_SUMMARY_LENGTH = 200
 _TOP_ITEMS_SHOWN = 5
 
 _SYSTEM_PROMPT = """你是 BriefFlow 的简报撰写助手。根据给定的用户偏好和推荐结果，写一段不超过 80 字的中文摘要。

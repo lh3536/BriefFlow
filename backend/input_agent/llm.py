@@ -32,7 +32,7 @@ _SYSTEM_PROMPT = """你是 BriefFlow 的需求理解助手。把用户的需求�
 - exclude_keywords 是用户明确表示不想要的词（"不要/排除/不考虑/避免"等后面的内容）。
 - 用户没有提到的维度一律给空列表。"""
 
-_JSON_OBJECT = re.compile(r"\{.*\}", re.DOTALL)
+_JSON_OBJECT = re.compile(r"\{.*?\}", re.DOTALL)
 
 
 def _extract_json(content: str) -> dict:

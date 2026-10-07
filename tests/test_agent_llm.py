@@ -143,7 +143,7 @@ class OutputAgentLLMTests(unittest.TestCase):
         self.assertEqual([i["job_id"] for i in result["recommended_items"]], ["a", "b"])
 
     def test_llm_summary_invalid_falls_back(self):
-        for bad in ("", "  ", '{"summary": "JSON不行"}', "**加粗**不行", "长" * 200):
+        for bad in ("", "  ", '{"summary": "JSON不行"}', "**加粗**不行", "长" * 300):
             with self.subTest(bad=bad), \
                  patch("backend.output_agent.llm.llm_available", return_value=True), \
                  patch("backend.output_agent.llm.chat_completion", return_value=bad):
