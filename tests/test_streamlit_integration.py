@@ -63,31 +63,31 @@ class StreamlitIntegrationTests(unittest.TestCase):
     def test_llm_failures_preserve_deterministic_pipeline(self):
         # Reuse one retrieval snapshot: fetched_at legitimately changes per fetch.
         snapshot = get_items(parse_user_request(QUERY))
-        with patch("backend.router.service.get_items", return_value=snapshot):
-            baseline = run_brief_flow(QUERY)
-            failures = [TimeoutError(), URLError('unavailable'), HTTPError('https://example.com', 500, 'error', {}, None)]
-            for failure in failures:
-                with self.subTest(kind=type(failure).__name__), \
-                     patch.dict(os.environ, {'BRIEF_LLM_API_KEY': 'test-placeholder'}), \
-                     patch('backend.input_agent.llm.chat_completion', side_effect=failure), \
-                     patch('backend.output_agent.llm.chat_completion', side_effect=failure):
-                    self.assertEqual(run_brief_flow(QUERY), baseline)
-            with patch.dict(os.environ, {'BRIEF_LLM_API_KEY': 'test-placeholder'}), \
-                 patch('backend.input_agent.llm.chat_completion', return_value='invalid JSON'), \
-                 patch('backend.output_agent.llm.chat_completion', return_value='{}'):
-                app = self.search()
-                self.assertEqual(app.session_state['search_result'], baseline)
-                self.assertIn('Deterministic Fallback Summary', [x.value for x in app.caption])
+        self.enterContext(patch("backend.router.service.get_items", return_value=snapshot))
+        baseline = run_brief_flow(QUERY)
+        failures = [TimeoutError(), URLError('unavailable'), HTTPError('https://example.com', 500, 'error', {}, None)]
+        for failure in failures:
+            with self.subTest(kind=type(failure).__name__), \
+                 patch.dict(os.environ, {'BRIEF_LLM_API_KEY': 'test-placeholder'}), \
+                 patch('backend.input_agent.llm.chat_completion', side_effect=failure), \
+                 patch('backend.output_agent.llm.chat_completion', side_effect=failure):
+                self.assertEqual(run_brief_flow(QUERY), baseline)
+        with patch.dict(os.environ, {'BRIEF_LLM_API_KEY': 'test-placeholder'}), \
+             patch('backend.input_agent.llm.chat_completion', return_value='invalid JSON'), \
+             patch('backend.output_agent.llm.chat_completion', return_value='{}'):
+            app = self.search()
+            self.assertEqual(app.session_state['search_result'], baseline)
+            self.assertIn('Deterministic Fallback Summary', [x.value for x in app.caption])
 
     def test_summary_cannot_change_ranking_data(self):
         # Reuse one retrieval snapshot: fetched_at legitimately changes per fetch.
         snapshot = get_items(parse_user_request(QUERY))
-        with patch("backend.router.service.get_items", return_value=snapshot):
-            baseline = run_brief_flow(QUERY)
-            with patch('backend.output_agent.llm.llm_available', return_value=True), \
-                 patch('backend.output_agent.llm.chat_completion', return_value=SUMMARY):
-                enhanced = run_brief_flow(QUERY)
-            self.assertEqual(enhanced['recommended_items'], baseline['recommended_items'])
+        self.enterContext(patch("backend.router.service.get_items", return_value=snapshot))
+        baseline = run_brief_flow(QUERY)
+        with patch('backend.output_agent.llm.llm_available', return_value=True), \
+             patch('backend.output_agent.llm.chat_completion', return_value=SUMMARY):
+            enhanced = run_brief_flow(QUERY)
+        self.assertEqual(enhanced['recommended_items'], baseline['recommended_items'])
 
     def test_optional_fields_missing_for_each_source(self):
         for source in (None, 'BriefFlow Mock', 'SQLite', 'Web'):
