@@ -1,0 +1,9 @@
+............................................................................ [ 50%]
+............................................................................                                                                   [100%]
+============================== warnings summary ===============================
+work\python-deps\fastapi\testclient.py:1
+  C:\Users\HENRYNOTEBOOK\Documents\Codex\2026-10-12\briefflow-output-repository-lh3536-briefflow-release\work\BriefFlow\work\python-deps\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+152 passed, 1 warning, 142 subtests passed in 7.74s

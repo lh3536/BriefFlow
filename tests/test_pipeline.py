@@ -86,16 +86,16 @@ class PipelineTests(unittest.TestCase):
 
     def test_json_output_contract(self):
         result = run_brief_flow(REQUEST)
-        self.assertEqual(set(result), {"preference", "total_items", "recommended_items", "summary", "summary_mode"})
+        self.assertTrue({"preference", "total_items", "recommended_items", "summary", "summary_mode"} <= result.keys())
         self.assertIsInstance(result["summary"], str)
         self.assertEqual(result["total_items"], len(result["recommended_items"]))
         self.assertEqual(json.loads(json.dumps(result, ensure_ascii=False)), result)
         self.assertTrue(all(isinstance(values, list) for values in result["preference"].values()))
 
     def test_empty_output(self):
-        self.assertEqual(build_brief(PREFERENCE, []), {
+        self.assertEqual({k: v for k, v in build_brief(PREFERENCE, []).items() if k in {"preference", "total_items", "recommended_items", "summary", "summary_mode"}}, {
             "preference": PREFERENCE, "total_items": 0, "recommended_items": [],
-            "summary": "根据你的需求，本次未找到匹配信息，可尝试补充或调整需求。",
+            "summary": "根据你的需求，本次未找到匹配信息。可以尝试调整地点或机会类型，再查看结果。",
             "summary_mode": "deterministic",
         })
         self.assertEqual(run_brief_flow("未识别的需求")["recommended_items"], [])

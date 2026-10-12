@@ -1,0 +1,1 @@
+PASS: json.load; 15 records; unique job_001–job_015; exact schema; 4 cities; categories; dates; integer scores; explanation lists and score sums; forbidden keywords absent; example.com links

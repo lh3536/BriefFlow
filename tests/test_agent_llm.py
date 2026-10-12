@@ -131,14 +131,15 @@ class OutputAgentLLMTests(unittest.TestCase):
     def test_llm_disabled_uses_deterministic_summary(self):
         with patch("backend.output_agent.llm.llm_available", return_value=False):
             result = build_brief(empty_preference(), self.ITEMS)
-        self.assertEqual(result["summary"], "根据你的需求，本次找到 2 条匹配信息，其中 1 条高度匹配。")
+        self.assertEqual(result["summary"], "本次共筛选出 2 条与你需求相关的机会，其中 1 条高度匹配。按当前推荐顺序，建议先查看《【模拟】投行分析实习》、《【模拟】行业研究实习》。")
 
     def test_llm_summary_used_when_valid(self):
         with patch("backend.output_agent.llm.llm_available", return_value=True), \
              patch("backend.output_agent.llm.chat_completion",
-                   return_value="本次为你找到 2 条匹配，其中投行分析实习高度匹配，建议优先查看。"):
+                   return_value='{"choices": [1, 1]}'):
             result = build_brief(empty_preference(), self.ITEMS)
-        self.assertEqual(result["summary"], "本次为你找到 2 条匹配，其中投行分析实习高度匹配，建议优先查看。")
+        self.assertEqual(result["summary"], "这次为你整理了 2 条相关机会，其中 1 条高度匹配。可以先从《【模拟】投行分析实习》、《【模拟】行业研究实习》看起，再核实来源中的申请要求。")
+        self.assertEqual(result["summary_mode"], "llm")
         self.assertEqual(result["total_items"], 2)  # 其余契约字段不受影响
         self.assertEqual([i["job_id"] for i in result["recommended_items"]], ["a", "b"])
 
@@ -148,13 +149,13 @@ class OutputAgentLLMTests(unittest.TestCase):
                  patch("backend.output_agent.llm.llm_available", return_value=True), \
                  patch("backend.output_agent.llm.chat_completion", return_value=bad):
                 result = build_brief(empty_preference(), self.ITEMS)
-            self.assertEqual(result["summary"], "根据你的需求，本次找到 2 条匹配信息，其中 1 条高度匹配。")
+            self.assertEqual(result["summary"], "本次共筛选出 2 条与你需求相关的机会，其中 1 条高度匹配。按当前推荐顺序，建议先查看《【模拟】投行分析实习》、《【模拟】行业研究实习》。")
 
     def test_llm_summary_error_retries_then_falls_back(self):
         with patch("backend.output_agent.llm.llm_available", return_value=True), \
              patch("backend.output_agent.llm.chat_completion", side_effect=OSError("boom")) as chat:
             result = build_brief(empty_preference(), self.ITEMS)
-        self.assertEqual(result["summary"], "根据你的需求，本次找到 2 条匹配信息，其中 1 条高度匹配。")
+        self.assertEqual(result["summary"], "本次共筛选出 2 条与你需求相关的机会，其中 1 条高度匹配。按当前推荐顺序，建议先查看《【模拟】投行分析实习》、《【模拟】行业研究实习》。")
         self.assertEqual(chat.call_count, 2)
 
     def test_llm_summary_does_not_mutate_items(self):

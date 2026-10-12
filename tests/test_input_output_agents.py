@@ -97,7 +97,7 @@ class InputAgentTests(unittest.TestCase):
 class OutputAgentTests(unittest.TestCase):
     def test_json_contract(self):
         result = build_brief(empty_preference(), [{"job_id": "a", "match_score": 90}])
-        self.assertEqual(set(result), {"preference", "total_items", "recommended_items", "summary", "summary_mode"})
+        self.assertTrue({"preference", "total_items", "recommended_items", "summary", "summary_mode"} <= result.keys())
         self.assertEqual(json.loads(json.dumps(result, ensure_ascii=False, allow_nan=False)), result)
         self.assertEqual(result["total_items"], 1)
         self.assertIsInstance(result["summary"], str)
@@ -105,7 +105,7 @@ class OutputAgentTests(unittest.TestCase):
     def test_high_match_count_and_threshold(self):
         items = [{"match_score": score} for score in (0, 79, 79.9, 80, 90, 100)]
         result = build_brief(empty_preference(), items)
-        self.assertEqual(result["summary"], "根据你的需求，本次找到 6 条匹配信息，其中 3 条高度匹配。")
+        self.assertIn("6 条与你需求相关的机会，其中 3 条高度匹配", result["summary"])
         self.assertEqual(result["recommended_items"], items)
 
     def test_empty_recommendations(self):

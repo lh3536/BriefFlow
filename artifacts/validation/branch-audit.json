@@ -1,0 +1,120 @@
+[
+  {
+    "branch": "origin/dev",
+    "latest": "0743fe355e6bfbab7d2073fb2a01092a057fbc5a Merge remote-tracking branch 'origin/main'",
+    "ahead": 0,
+    "behind": 0,
+    "changed_files": []
+  },
+  {
+    "branch": "origin/feature/agent-ao-llm",
+    "latest": "da386d3968be55d39fa4480aaf678d1e74711b38 modification no.2",
+    "ahead": 2,
+    "behind": 2,
+    "changed_files": [
+      "A\t.env.example",
+      "A\tbackend/input_agent/llm.py",
+      "M\tbackend/input_agent/service.py",
+      "A\tbackend/llm.py",
+      "A\tbackend/output_agent/llm.py",
+      "M\tbackend/output_agent/service.py",
+      "A\tdocs/AGENT_LLM.md",
+      "M\tfrontend/package-lock.json",
+      "A\ttests/test_agent_llm.py"
+    ]
+  },
+  {
+    "branch": "origin/feature/flin-a3a4",
+    "latest": "69a3979db0585871a899f9f5bad4c88b1c34d2a0 feat: add BriefFlow web MVP",
+    "ahead": 0,
+    "behind": 2,
+    "changed_files": []
+  },
+  {
+    "branch": "origin/feature/main-router-frontend",
+    "latest": "8d6cc40b0cf1d8a500f7923e9a4569f382d05794 feat: improve app.py appearance",
+    "ahead": 2,
+    "behind": 0,
+    "changed_files": [
+      "M\tapp.py"
+    ]
+  },
+  {
+    "branch": "origin/feature/ranking-priority",
+    "latest": "d0d2654c52d6ae03f7120d9ee4508d6378442809 feat: improve ranking and priority engine",
+    "ahead": 0,
+    "behind": 3,
+    "changed_files": []
+  },
+  {
+    "branch": "origin/feature/retrieval-database",
+    "latest": "0efa453f86cd33c4bb198a502e0fe1a3f996caea feat: add retrieval and database v0.1",
+    "ahead": 0,
+    "behind": 4,
+    "changed_files": []
+  },
+  {
+    "branch": "origin/feature/retrieval-round2",
+    "latest": "2f6572702d66c27dca3197d32fc67517c30d53e7 docs(retrieval): 更新 README 记录三来源与 deadline 状态",
+    "ahead": 2,
+    "behind": 0,
+    "changed_files": [
+      "M\tbackend/retrieval/README.md",
+      "A\tbackend/retrieval/dates.py",
+      "M\tbackend/retrieval/service.py",
+      "M\tbackend/retrieval/sources.py",
+      "A\tdocs/retrieval_location_fix.md",
+      "A\ttests/test_retrieval_round2.py"
+    ]
+  },
+  {
+    "branch": "origin/feature/test-merge1",
+    "latest": "f8397bb762e962fd8eb00cda34db04b0fcd159ab merge martin and nolan part,hv issues need codex",
+    "ahead": 6,
+    "behind": 0,
+    "changed_files": [
+      "A\t.env.example",
+      "M\tapp.py",
+      "A\tbackend/input_agent/llm.py",
+      "M\tbackend/input_agent/service.py",
+      "A\tbackend/llm.py",
+      "A\tbackend/output_agent/llm.py",
+      "M\tbackend/output_agent/service.py",
+      "A\tdocs/AGENT_LLM.md",
+      "M\tfrontend/package-lock.json",
+      "A\ttests/test_agent_llm.py"
+    ]
+  },
+  {
+    "branch": "origin/integration/streamlit-agent-llm",
+    "latest": "7872fca22e7186618cb43682def96ca0225f501a restore  changes on test_streamlit_integration.py",
+    "ahead": 3,
+    "behind": 0,
+    "changed_files": [
+      "A\t.env.example",
+      "M\tREADME.md",
+      "M\tapp.py",
+      "A\tbackend/input_agent/llm.py",
+      "M\tbackend/input_agent/service.py",
+      "A\tbackend/llm.py",
+      "A\tbackend/output_agent/llm.py",
+      "M\tbackend/output_agent/service.py",
+      "A\tdocs/AGENT_LLM.md",
+      "M\tdocs/ARCHITECTURE.md",
+      "A\trequirements.txt",
+      "A\ttests/test_agent_llm.py",
+      "M\ttests/test_input_output_agents.py",
+      "A\ttests/test_llm_client.py",
+      "A\ttests/test_llm_configuration.py",
+      "M\ttests/test_pipeline.py",
+      "A\ttests/test_streamlit_integration.py"
+    ]
+  },
+  {
+    "branch": "origin/main",
+    "latest": "0743fe355e6bfbab7d2073fb2a01092a057fbc5a Merge remote-tracking branch 'origin/main'",
+    "ahead": 0,
+    "behind": 0,
+    "changed_files": []
+  }
+]

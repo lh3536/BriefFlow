@@ -13,7 +13,9 @@ from backend.input_agent.service import parse_user_request
 
 APP = str(Path(__file__).resolve().parents[1] / 'app.py')
 QUERY = '我是金融专业大三学生，想找广州深圳香港澳门的金融实习，优先投行、券商和 FinTech，不要销售岗。'
-SUMMARY = '本次为你找到金融实习机会，建议关注广州和深圳的岗位。'
+def grounded_response(messages):
+    slots = json.loads(messages[-1]['content'])['approved_sentences']
+    return json.dumps({'choices': [0 for slot in slots]})
 
 class StreamlitIntegrationTests(unittest.TestCase):
     def setUp(self):
@@ -37,28 +39,28 @@ class StreamlitIntegrationTests(unittest.TestCase):
             self.assertIn(result['summary'], [x.value for x in app.info])
             self.assertIn('🤖 AI Brief', [x.value for x in app.subheader])
             self.assertIn('🧠 Understood Preference', [x.value for x in app.subheader])
-            self.assertTrue(any('Rule Fallback' in x.value for x in app.markdown))
+            self.assertTrue(any('Rule-based Brief' in x.value for x in app.markdown))
             self.assertTrue(any('Demo / Mock Data' in x.value for x in app.warning))
             app.selectbox[0].select(10).run()
             self.assertFalse(app.exception)
             self.assertEqual(app.session_state['search_result'], result)
-            self.assertEqual(len(app.metric), 2 * min(10, result['total_items']))
+            self.assertEqual(len(app.metric), 4 + 2 * min(10, result['total_items']))
 
     def test_valid_llm_enhances_preference_and_summary_in_ui(self):
         response = json.dumps({'keywords': ['FinTech', '券商']})
         with patch.dict(os.environ, {'BRIEF_LLM_API_KEY': 'test-placeholder'}), \
              patch('backend.input_agent.llm.chat_completion', return_value=response), \
-             patch('backend.output_agent.llm.chat_completion', return_value=SUMMARY):
+             patch('backend.output_agent.llm.chat_completion', side_effect=grounded_response):
             app = self.search()
         self.assertFalse(app.exception)
         result = app.session_state['search_result']
         self.assertIn('FinTech', result['preference']['keywords'])
         self.assertIn('销售', result['preference']['exclude_keywords'])
-        self.assertEqual(result['summary'], SUMMARY)
+        self.assertIn('本次共筛选出', result['summary'])
         self.assertEqual(result['summary_mode'], 'llm')
-        self.assertIn(SUMMARY, [x.value for x in app.info])
-        self.assertIn('LLM Summary', [x.value for x in app.caption])
-        self.assertTrue(any('LLM Enhanced' in x.value for x in app.markdown))
+        self.assertIn(result['summary'], [x.value for x in app.info])
+        self.assertIn('AI-generated Brief', [x.value for x in app.caption])
+        self.assertTrue(any('AI-generated Brief' in x.value for x in app.markdown))
 
     def test_llm_failures_preserve_deterministic_pipeline(self):
         # Reuse one retrieval snapshot: fetched_at legitimately changes per fetch.
@@ -77,7 +79,7 @@ class StreamlitIntegrationTests(unittest.TestCase):
              patch('backend.output_agent.llm.chat_completion', return_value='{}'):
             app = self.search()
             self.assertEqual(app.session_state['search_result'], baseline)
-            self.assertIn('Deterministic Fallback Summary', [x.value for x in app.caption])
+            self.assertIn('Rule-based Brief', [x.value for x in app.caption])
 
     def test_summary_cannot_change_ranking_data(self):
         # Reuse one retrieval snapshot: fetched_at legitimately changes per fetch.
@@ -85,7 +87,7 @@ class StreamlitIntegrationTests(unittest.TestCase):
         self.enterContext(patch("backend.router.service.get_items", return_value=snapshot))
         baseline = run_brief_flow(QUERY)
         with patch('backend.output_agent.llm.llm_available', return_value=True), \
-             patch('backend.output_agent.llm.chat_completion', return_value=SUMMARY):
+             patch('backend.output_agent.llm.chat_completion', side_effect=grounded_response):
             enhanced = run_brief_flow(QUERY)
         self.assertEqual(enhanced['recommended_items'], baseline['recommended_items'])
 
@@ -113,10 +115,10 @@ class StreamlitIntegrationTests(unittest.TestCase):
 
     def test_web_mock_fallback_is_visible(self):
         with patch.dict(os.environ, {'BRIEFFLOW_RETRIEVAL_MODE': 'web'}), \
-             patch('backend.retrieval.service.fetch_ukri', side_effect=OSError('offline')):
+             patch('backend.retrieval.service.fetch_web', side_effect=OSError('offline')):
             app = self.search()
         self.assertFalse(app.exception)
-        self.assertTrue(any('回退到 Mock Data' in x.value for x in app.warning))
+        self.assertTrue(any('本次使用 Demo Mock Data' in x.value for x in app.warning))
 
 if __name__ == '__main__':
     unittest.main()

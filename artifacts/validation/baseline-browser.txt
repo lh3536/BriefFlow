@@ -1,0 +1,155 @@
+💼 BriefFlow
+Agent Mode
+
+🟡 Rule Fallback
+
+LLM Enhanced 表示已配置；调用失败时自动回退。
+
+💡
+
+修改输入，点击检索，Agent 会为你重新定制机会。
+
+Deploy
+🔍 BriefFlow
+
+一句话，创建属于你的 AI 情报站
+
+请输入你的需求：
+
+🚀 开始检索
+
+Demo / Mock Data：模拟机会，非真实招聘信息。
+
+已为你找到 11 条机会
+
+🤖 AI Brief
+
+Deterministic Fallback Summary
+
+根据你的需求，本次找到 11 条匹配信息，其中 11 条高度匹配。
+
+🧠 Understood Preference
+
+Locations: 广州 / 深圳 / 香港 / 澳门
+
+Categories: 金融实习 / 经管比赛
+
+Keywords: 金融 / 投行
+
+Excluded: 销售
+
+展示数量
+
+【模拟】投行分析实习
+
+虚构机构·BriefFlow示范01
+
+📍 广州 | 金融实习 | 📅 2026-10-20
+
+匹配分数
+
+100.0
+
+优先级分数
+
+83.0
+
+keyboard_arrow_down
+
+💡 为什么推荐给你？
+
+地点匹配（广州）+40
+类别匹配（金融实习）+40
+关键词匹配（金融、投行）+20
+
+来源：BriefFlow Mock
+
+查看来源
+
+【模拟】行业研究实习
+
+虚构机构·BriefFlow示范02
+
+📍 深圳 | 金融实习 | 📅 2026-10-25
+
+匹配分数
+
+100.0
+
+优先级分数
+
+83.0
+
+keyboard_arrow_right
+
+💡 为什么推荐给你？
+
+来源：BriefFlow Mock
+
+查看来源
+
+【模拟】资产管理实习
+
+虚构机构·BriefFlow示范03
+
+📍 香港 | 金融实习 | 📅 2026-11-05
+
+匹配分数
+
+100.0
+
+优先级分数
+
+80.0
+
+keyboard_arrow_right
+
+💡 为什么推荐给你？
+
+来源：BriefFlow Mock
+
+查看来源
+
+【模拟】风险管理实习
+
+虚构机构·BriefFlow示范04
+
+📍 澳门 | 金融实习 | 📅 2026-11-10
+
+匹配分数
+
+100.0
+
+优先级分数
+
+80.0
+
+keyboard_arrow_right
+
+💡 为什么推荐给你？
+
+来源：BriefFlow Mock
+
+查看来源
+
+【模拟】量化研究实习
+
+虚构机构·BriefFlow示范05
+
+📍 深圳 | 金融实习 | 📅 2026-11-15
+
+匹配分数
+
+100.0
+
+优先级分数
+
+80.0
+
+keyboard_arrow_right
+
+💡 为什么推荐给你？
+
+来源：BriefFlow Mock
+
+查看来源

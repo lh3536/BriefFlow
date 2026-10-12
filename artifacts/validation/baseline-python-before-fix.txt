@@ -1,0 +1,396 @@
+........................................................................................F......F... [ 73%]
+.F..FF.........F...................F                     [100%]
+================================== FAILURES ===================================
+_______ RetrievalTests.test_cache_failure_does_not_discard_web_results ________
+
+self = <test_retrieval.RetrievalTests testMethod=test_cache_failure_does_not_discard_web_results>
+
+    def test_cache_failure_does_not_discard_web_results(self):
+>       with patch.dict(os.environ, {"BRIEFFLOW_RETRIEVAL_MODE": "web"}), patch("backend.retrieval.service.fetch_ukri", return_value=[record()]), patch("backend.retrieval.service.save_items", side_effect=sqlite3.OperationalError("read only")), self.assertLogs("backend.retrieval.service", level="WARNING"):
+                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_retrieval.py:209: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\mock.py:1467: in __enter__
+    original, local = self.get_original()
+                      ^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <unittest.mock._patch object at 0x00000274C8633A70>
+
+    def get_original(self):
+        target = self.getter()
+        name = self.attribute
+    
+        original = DEFAULT
+        local = False
+    
+        try:
+            original = target.__dict__[name]
+        except (AttributeError, KeyError):
+            original = getattr(target, name, DEFAULT)
+        else:
+            local = True
+    
+        if name in _builtins and isinstance(target, ModuleType):
+            self.create = True
+    
+        if not self.create and original is DEFAULT:
+>           raise AttributeError(
+                "%s does not have the attribute %r" % (target, name)
+            )
+E           AttributeError: <module 'backend.retrieval.service' from 'C:\\Users\\HENRYNOTEBOOK\\Documents\\Codex\\2026-10-12\\briefflow-output-repository-lh3536-briefflow-release\\work\\BriefFlow\\backend\\retrieval\\service.py'> does not have the attribute 'fetch_ukri'
+
+..\..\..\..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\mock.py:1437: AttributeError
+__________________ RetrievalTests.test_empty_web_falls_back ___________________
+
+self = <test_retrieval.RetrievalTests testMethod=test_empty_web_falls_back>
+
+    def test_empty_web_falls_back(self):
+>       with patch.dict(os.environ, {"BRIEFFLOW_RETRIEVAL_MODE": "web"}), patch("backend.retrieval.service.fetch_ukri", return_value=[]), self.assertLogs("backend.retrieval.service", level="WARNING"):
+                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_retrieval.py:199: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\mock.py:1467: in __enter__
+    original, local = self.get_original()
+                      ^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <unittest.mock._patch object at 0x00000274C7A6C320>
+
+    def get_original(self):
+        target = self.getter()
+        name = self.attribute
+    
+        original = DEFAULT
+        local = False
+    
+        try:
+            original = target.__dict__[name]
+        except (AttributeError, KeyError):
+            original = getattr(target, name, DEFAULT)
+        else:
+            local = True
+    
+        if name in _builtins and isinstance(target, ModuleType):
+            self.create = True
+    
+        if not self.create and original is DEFAULT:
+>           raise AttributeError(
+                "%s does not have the attribute %r" % (target, name)
+            )
+E           AttributeError: <module 'backend.retrieval.service' from 'C:\\Users\\HENRYNOTEBOOK\\Documents\\Codex\\2026-10-12\\briefflow-output-repository-lh3536-briefflow-release\\work\\BriefFlow\\backend\\retrieval\\service.py'> does not have the attribute 'fetch_ukri'
+
+..\..\..\..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\mock.py:1437: AttributeError
+_ RetrievalTests.test_incomplete_response_and_invalid_xml_fall_back (error='IncompleteRead') _
+
+self = <test_retrieval.RetrievalTests testMethod=test_incomplete_response_and_invalid_xml_fall_back>
+
+    def test_incomplete_response_and_invalid_xml_fall_back(self):
+        import xml.etree.ElementTree as ET
+        for error in (IncompleteRead(b"partial"), ET.ParseError("invalid XML")):
+>           with self.subTest(error=type(error).__name__), patch.dict(os.environ, {"BRIEFFLOW_RETRIEVAL_MODE": "web"}), patch("backend.retrieval.service.fetch_ukri", side_effect=error), self.assertLogs("backend.retrieval.service", level="WARNING"):
+                                                                                                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_retrieval.py:205: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\mock.py:1467: in __enter__
+    original, local = self.get_original()
+                      ^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <unittest.mock._patch object at 0x00000274C7A6DDF0>
+
+    def get_original(self):
+        target = self.getter()
+        name = self.attribute
+    
+        original = DEFAULT
+        local = False
+    
+        try:
+            original = target.__dict__[name]
+        except (AttributeError, KeyError):
+            original = getattr(target, name, DEFAULT)
+        else:
+            local = True
+    
+        if name in _builtins and isinstance(target, ModuleType):
+            self.create = True
+    
+        if not self.create and original is DEFAULT:
+>           raise AttributeError(
+                "%s does not have the attribute %r" % (target, name)
+            )
+E           AttributeError: <module 'backend.retrieval.service' from 'C:\\Users\\HENRYNOTEBOOK\\Documents\\Codex\\2026-10-12\\briefflow-output-repository-lh3536-briefflow-release\\work\\BriefFlow\\backend\\retrieval\\service.py'> does not have the attribute 'fetch_ukri'
+
+..\..\..\..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\mock.py:1437: AttributeError
+_ RetrievalTests.test_incomplete_response_and_invalid_xml_fall_back (error='ParseError') _
+
+self = <test_retrieval.RetrievalTests testMethod=test_incomplete_response_and_invalid_xml_fall_back>
+
+    def test_incomplete_response_and_invalid_xml_fall_back(self):
+        import xml.etree.ElementTree as ET
+        for error in (IncompleteRead(b"partial"), ET.ParseError("invalid XML")):
+>           with self.subTest(error=type(error).__name__), patch.dict(os.environ, {"BRIEFFLOW_RETRIEVAL_MODE": "web"}), patch("backend.retrieval.service.fetch_ukri", side_effect=error), self.assertLogs("backend.retrieval.service", level="WARNING"):
+                                                                                                                        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_retrieval.py:205: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\mock.py:1467: in __enter__
+    original, local = self.get_original()
+                      ^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <unittest.mock._patch object at 0x00000274C85E7F20>
+
+    def get_original(self):
+        target = self.getter()
+        name = self.attribute
+    
+        original = DEFAULT
+        local = False
+    
+        try:
+            original = target.__dict__[name]
+        except (AttributeError, KeyError):
+            original = getattr(target, name, DEFAULT)
+        else:
+            local = True
+    
+        if name in _builtins and isinstance(target, ModuleType):
+            self.create = True
+    
+        if not self.create and original is DEFAULT:
+>           raise AttributeError(
+                "%s does not have the attribute %r" % (target, name)
+            )
+E           AttributeError: <module 'backend.retrieval.service' from 'C:\\Users\\HENRYNOTEBOOK\\Documents\\Codex\\2026-10-12\\briefflow-output-repository-lh3536-briefflow-release\\work\\BriefFlow\\backend\\retrieval\\service.py'> does not have the attribute 'fetch_ukri'
+
+..\..\..\..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\mock.py:1437: AttributeError
+_______________ RetrievalTests.test_metrics_counts_and_duration _______________
+
+self = <test_retrieval.RetrievalTests testMethod=test_metrics_counts_and_duration>
+
+    def test_metrics_counts_and_duration(self):
+        raw = [record(), record(), record(title="")]
+>       with patch.dict(os.environ, {"BRIEFFLOW_RETRIEVAL_MODE": "web"}), patch("backend.retrieval.service.fetch_ukri", return_value=raw), self.assertLogs("backend.retrieval.service", level="INFO") as logs:
+                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_retrieval.py:214: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\mock.py:1467: in __enter__
+    original, local = self.get_original()
+                      ^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <unittest.mock._patch object at 0x00000274C8625400>
+
+    def get_original(self):
+        target = self.getter()
+        name = self.attribute
+    
+        original = DEFAULT
+        local = False
+    
+        try:
+            original = target.__dict__[name]
+        except (AttributeError, KeyError):
+            original = getattr(target, name, DEFAULT)
+        else:
+            local = True
+    
+        if name in _builtins and isinstance(target, ModuleType):
+            self.create = True
+    
+        if not self.create and original is DEFAULT:
+>           raise AttributeError(
+                "%s does not have the attribute %r" % (target, name)
+            )
+E           AttributeError: <module 'backend.retrieval.service' from 'C:\\Users\\HENRYNOTEBOOK\\Documents\\Codex\\2026-10-12\\briefflow-output-repository-lh3536-briefflow-release\\work\\BriefFlow\\backend\\retrieval\\service.py'> does not have the attribute 'fetch_ukri'
+
+..\..\..\..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\mock.py:1437: AttributeError
+______ RetrievalTests.test_mock_still_reads_without_network_or_database _______
+
+self = <test_retrieval.RetrievalTests testMethod=test_mock_still_reads_without_network_or_database>
+
+    def test_mock_still_reads_without_network_or_database(self):
+        before = MOCK_PATH.read_bytes()
+>       with patch("backend.retrieval.service.fetch_ukri") as fetch:
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_retrieval.py:46: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\mock.py:1467: in __enter__
+    original, local = self.get_original()
+                      ^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <unittest.mock._patch object at 0x00000274C86257F0>
+
+    def get_original(self):
+        target = self.getter()
+        name = self.attribute
+    
+        original = DEFAULT
+        local = False
+    
+        try:
+            original = target.__dict__[name]
+        except (AttributeError, KeyError):
+            original = getattr(target, name, DEFAULT)
+        else:
+            local = True
+    
+        if name in _builtins and isinstance(target, ModuleType):
+            self.create = True
+    
+        if not self.create and original is DEFAULT:
+>           raise AttributeError(
+                "%s does not have the attribute %r" % (target, name)
+            )
+E           AttributeError: <module 'backend.retrieval.service' from 'C:\\Users\\HENRYNOTEBOOK\\Documents\\Codex\\2026-10-12\\briefflow-output-repository-lh3536-briefflow-release\\work\\BriefFlow\\backend\\retrieval\\service.py'> does not have the attribute 'fetch_ukri'
+
+..\..\..\..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\mock.py:1437: AttributeError
+______ RetrievalTests.test_network_failure_falls_back_and_pipeline_runs _______
+
+self = <test_retrieval.RetrievalTests testMethod=test_network_failure_falls_back_and_pipeline_runs>
+
+    def test_network_failure_falls_back_and_pipeline_runs(self):
+>       with patch.dict(os.environ, {"BRIEFFLOW_RETRIEVAL_MODE": "web"}), patch("backend.retrieval.service.fetch_ukri", side_effect=URLError("offline")), self.assertLogs("backend.retrieval.service", level="INFO") as logs:
+                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_retrieval.py:191: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\mock.py:1467: in __enter__
+    original, local = self.get_original()
+                      ^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <unittest.mock._patch object at 0x00000274C85E7050>
+
+    def get_original(self):
+        target = self.getter()
+        name = self.attribute
+    
+        original = DEFAULT
+        local = False
+    
+        try:
+            original = target.__dict__[name]
+        except (AttributeError, KeyError):
+            original = getattr(target, name, DEFAULT)
+        else:
+            local = True
+    
+        if name in _builtins and isinstance(target, ModuleType):
+            self.create = True
+    
+        if not self.create and original is DEFAULT:
+>           raise AttributeError(
+                "%s does not have the attribute %r" % (target, name)
+            )
+E           AttributeError: <module 'backend.retrieval.service' from 'C:\\Users\\HENRYNOTEBOOK\\Documents\\Codex\\2026-10-12\\briefflow-output-repository-lh3536-briefflow-release\\work\\BriefFlow\\backend\\retrieval\\service.py'> does not have the attribute 'fetch_ukri'
+
+..\..\..\..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\mock.py:1437: AttributeError
+_______________ RetrievalTests.test_web_mode_caches_valid_items _______________
+
+self = <test_retrieval.RetrievalTests testMethod=test_web_mode_caches_valid_items>
+
+    def test_web_mode_caches_valid_items(self):
+>       with patch.dict(os.environ, {"BRIEFFLOW_RETRIEVAL_MODE": "web"}), patch("backend.retrieval.service.fetch_ukri", return_value=parse_ukri_feed(FIXTURE.read_bytes())):
+                                                                          ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_retrieval.py:184: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\mock.py:1467: in __enter__
+    original, local = self.get_original()
+                      ^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <unittest.mock._patch object at 0x00000274C85E50D0>
+
+    def get_original(self):
+        target = self.getter()
+        name = self.attribute
+    
+        original = DEFAULT
+        local = False
+    
+        try:
+            original = target.__dict__[name]
+        except (AttributeError, KeyError):
+            original = getattr(target, name, DEFAULT)
+        else:
+            local = True
+    
+        if name in _builtins and isinstance(target, ModuleType):
+            self.create = True
+    
+        if not self.create and original is DEFAULT:
+>           raise AttributeError(
+                "%s does not have the attribute %r" % (target, name)
+            )
+E           AttributeError: <module 'backend.retrieval.service' from 'C:\\Users\\HENRYNOTEBOOK\\Documents\\Codex\\2026-10-12\\briefflow-output-repository-lh3536-briefflow-release\\work\\BriefFlow\\backend\\retrieval\\service.py'> does not have the attribute 'fetch_ukri'
+
+..\..\..\..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\mock.py:1437: AttributeError
+_________ StreamlitIntegrationTests.test_web_mock_fallback_is_visible _________
+
+self = <test_streamlit_integration.StreamlitIntegrationTests testMethod=test_web_mock_fallback_is_visible>
+
+    def test_web_mock_fallback_is_visible(self):
+        with patch.dict(os.environ, {'BRIEFFLOW_RETRIEVAL_MODE': 'web'}), \
+>            patch('backend.retrieval.service.fetch_ukri', side_effect=OSError('offline')):
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+tests\test_streamlit_integration.py:116: 
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+..\..\..\..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\mock.py:1467: in __enter__
+    original, local = self.get_original()
+                      ^^^^^^^^^^^^^^^^^^^
+_ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _ _
+
+self = <unittest.mock._patch object at 0x00000274C8A05F70>
+
+    def get_original(self):
+        target = self.getter()
+        name = self.attribute
+    
+        original = DEFAULT
+        local = False
+    
+        try:
+            original = target.__dict__[name]
+        except (AttributeError, KeyError):
+            original = getattr(target, name, DEFAULT)
+        else:
+            local = True
+    
+        if name in _builtins and isinstance(target, ModuleType):
+            self.create = True
+    
+        if not self.create and original is DEFAULT:
+>           raise AttributeError(
+                "%s does not have the attribute %r" % (target, name)
+            )
+E           AttributeError: <module 'backend.retrieval.service' from 'C:\\Users\\HENRYNOTEBOOK\\Documents\\Codex\\2026-10-12\\briefflow-output-repository-lh3536-briefflow-release\\work\\BriefFlow\\backend\\retrieval\\service.py'> does not have the attribute 'fetch_ukri'
+
+..\..\..\..\..\..\.cache\codex-runtimes\codex-primary-runtime\dependencies\python\Lib\unittest\mock.py:1437: AttributeError
+============================== warnings summary ===============================
+work\python-deps\fastapi\testclient.py:1
+  C:\Users\HENRYNOTEBOOK\Documents\Codex\2026-10-12\briefflow-output-repository-lh3536-briefflow-release\work\BriefFlow\work\python-deps\fastapi\testclient.py:1: StarletteDeprecationWarning: Using `httpx` with `starlette.testclient` is deprecated; install `httpx2` instead.
+    from starlette.testclient import TestClient as TestClient  # noqa
+
+-- Docs: https://docs.pytest.org/en/stable/how-to/capture-warnings.html
+=========================== short test summary info ===========================
+FAILED tests/test_retrieval.py::RetrievalTests::test_cache_failure_does_not_discard_web_results
+FAILED tests/test_retrieval.py::RetrievalTests::test_empty_web_falls_back - A...
+SUBFAILED(error='IncompleteRead') tests/test_retrieval.py::RetrievalTests::test_incomplete_response_and_invalid_xml_fall_back
+SUBFAILED(error='ParseError') tests/test_retrieval.py::RetrievalTests::test_incomplete_response_and_invalid_xml_fall_back
+FAILED tests/test_retrieval.py::RetrievalTests::test_metrics_counts_and_duration
+FAILED tests/test_retrieval.py::RetrievalTests::test_mock_still_reads_without_network_or_database
+FAILED tests/test_retrieval.py::RetrievalTests::test_network_failure_falls_back_and_pipeline_runs
+FAILED tests/test_retrieval.py::RetrievalTests::test_web_mode_caches_valid_items
+FAILED tests/test_streamlit_integration.py::StreamlitIntegrationTests::test_web_mock_fallback_is_visible
+9 failed, 128 passed, 1 warning, 131 subtests passed in 7.75s

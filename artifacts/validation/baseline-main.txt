@@ -1,0 +1,34 @@
+Preference:
+{
+  "categories": [
+    "金融实习"
+  ],
+  "locations": [
+    "广州",
+    "深圳",
+    "香港",
+    "澳门"
+  ],
+  "keywords": [
+    "金融"
+  ],
+  "exclude_keywords": [
+    "销售"
+  ]
+}
+Top recommendations (showing up to 5 of 9; MOCK DATA):
+- job_001 | 【模拟】投行分析实习 | 广州
+  Match Score: 100.0
+  Why Recommended: 地点匹配（广州）+40; 类别匹配（金融实习）+40; 关键词匹配（金融）+20
+- job_002 | 【模拟】行业研究实习 | 深圳
+  Match Score: 100.0
+  Why Recommended: 地点匹配（深圳）+40; 类别匹配（金融实习）+40; 关键词匹配（金融）+20
+- job_003 | 【模拟】资产管理实习 | 香港
+  Match Score: 100.0
+  Why Recommended: 地点匹配（香港）+40; 类别匹配（金融实习）+40; 关键词匹配（金融）+20
+- job_004 | 【模拟】风险管理实习 | 澳门
+  Match Score: 100.0
+  Why Recommended: 地点匹配（澳门）+40; 类别匹配（金融实习）+40; 关键词匹配（金融）+20
+- job_005 | 【模拟】量化研究实习 | 深圳
+  Match Score: 100.0
+  Why Recommended: 地点匹配（深圳）+40; 类别匹配（金融实习）+40; 关键词匹配（金融）+20

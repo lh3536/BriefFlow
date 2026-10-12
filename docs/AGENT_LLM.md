@@ -1,5 +1,22 @@
 # AO Agent LLM 增强说明（第二轮）
 
+## RC1 Output 更新（以下内容优先于后文旧版摘要说明）
+
+Output 保留 preference / total_items / recommended_items / summary /
+summary_mode，新增可选 highlights 与 result_stats。确定性简报为 2–4 句，
+从实际结果生成统计、现有标题、截止提醒和 Mock 提示，不改变排序或条目。
+
+为防止编造，Output LLM 现在只从每个事实句分组选择一个措辞，返回
+`{"choices": [0, 1, ...]}`。服务严格校验索引、数量与结构后自行拼接句子，
+不直接接受自由文本摘要；失败仍回退规则简报。后文旧版“纯文本长度校验”
+描述已被本节替代。Input LLM 和共享兼容客户端保持不变。
+
+Streamlit 依据本次 summary_mode 显示 AI-generated Brief 或 Rule-based Brief，
+不依据 API Key 是否存在。high match 沿用有限分数 80–100 的展示定义；
+临近截止为北京时间今天起 0–7 天（含今天），不计未知或已过期日期。
+无真实来源证据的空结果不会声明实时来源成功。详见
+[RC1 acceptance](../artifacts/validation/RC1_ACCEPTANCE.md)。
+
 > 适用范围：`backend/input_agent` + `backend/output_agent`（AO：理解用户输入 + 输出整合）。
 > 本文档补充 `input_output_changes.md`；原有 Preference / Item 契约不变，Output 契约**新增 `summary_mode` 字段**用于标识摘要来源。
 
