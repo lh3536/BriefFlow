@@ -97,7 +97,7 @@ class InputAgentTests(unittest.TestCase):
 class OutputAgentTests(unittest.TestCase):
     def test_json_contract(self):
         result = build_brief(empty_preference(), [{"job_id": "a", "match_score": 90}])
-        self.assertEqual(set(result), {"preference", "total_items", "recommended_items", "summary"})
+        self.assertEqual(set(result), {"preference", "total_items", "recommended_items", "summary", "summary_mode"})
         self.assertEqual(json.loads(json.dumps(result, ensure_ascii=False, allow_nan=False)), result)
         self.assertEqual(result["total_items"], 1)
         self.assertIsInstance(result["summary"], str)
