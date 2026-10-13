@@ -1,7 +1,8 @@
 """V0.1 policy weights, not statistically calibrated predictions."""
 
-# Preserve the existing match scale; timing only influences delivery priority.
-WEIGHTS = {"location": 40, "category": 40, "keyword": 20,
+# RC2: location + category alone are 70, below the existing high-match threshold.
+# Keyword points scale with requested-term coverage. Timing only affects priority.
+WEIGHTS = {"location": 35, "category": 35, "keyword": 30,
            "match_priority": 0.8, "deadline": 10, "freshness": 10}
 # Inclusive day boundaries: encourage action near closing, then recent discovery.
 DEADLINE_BANDS = ((3, 1.0), (7, 0.6), (14, 0.3))

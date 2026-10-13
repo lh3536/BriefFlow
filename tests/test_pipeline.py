@@ -72,7 +72,7 @@ class PipelineTests(unittest.TestCase):
         ]
         result = rank_items({**PREFERENCE, "keywords": ["量化"]}, items)
         self.assertEqual([item["job_id"] for item in result], ["z", "a", "b"])
-        self.assertEqual([item["match_score"] for item in result], [100, 80, 80])
+        self.assertEqual([item["match_score"] for item in result], [100, 70, 70])
 
     def test_location_and_category_filter(self):
         result = run_brief_flow("想找深圳金融实习，不要销售岗。")

@@ -2,6 +2,7 @@
 from copy import deepcopy
 
 from backend.output_agent.llm import summarize_with_llm
+from backend.llm import llm_provider
 from backend.output_agent.presentation import (
     HIGH_MATCH_THRESHOLD, describe_items, is_high_match, sentence_options,
 )
@@ -26,6 +27,7 @@ def build_brief(preference: dict[str, list[str]], ranked_items: list[dict]) -> d
         "recommended_items": items,
         "summary": llm_summary or deterministic,
         "summary_mode": "llm" if llm_summary else "deterministic",
+        "summary_provider": llm_provider() if llm_summary else None,
         "highlights": highlights,
         "result_stats": stats,
     }

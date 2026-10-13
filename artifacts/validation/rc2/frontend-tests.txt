@@ -1,0 +1,8 @@
+
+ RUN  v5.0.3 C:/Users/HENRYNOTEBOOK/Documents/Codex/2026-10-12/briefflow-output-repository-lh3536-briefflow-release/work/BriefFlow/frontend
+
+
+ Test Files  1 passed (1)
+      Tests  13 passed (13)
+   Start at  11:34:44
+   Duration  58.83s (environment 74%, setup 17%, import 6%, tests 3%)

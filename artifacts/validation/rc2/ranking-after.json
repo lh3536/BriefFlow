@@ -1,0 +1,484 @@
+[
+  {
+    "query": "粤港澳金融实习",
+    "preference": {
+      "categories": [
+        "金融实习"
+      ],
+      "locations": [
+        "广州",
+        "深圳",
+        "香港",
+        "澳门"
+      ],
+      "keywords": [
+        "金融"
+      ],
+      "exclude_keywords": []
+    },
+    "total": 9,
+    "score_min": 100.0,
+    "score_median": 100.0,
+    "score_max": 100.0,
+    "high_match_count": 9,
+    "priority_range": [
+      80.0,
+      86.0
+    ],
+    "items": [
+      {
+        "title": "【模拟】投行分析实习",
+        "score": 100.0,
+        "breakdown": {
+          "location": 35.0,
+          "category": 35.0,
+          "keyword": 30.0
+        }
+      },
+      {
+        "title": "【模拟】行业研究实习",
+        "score": 100.0,
+        "breakdown": {
+          "location": 35.0,
+          "category": 35.0,
+          "keyword": 30.0
+        }
+      },
+      {
+        "title": "【模拟】资产管理实习",
+        "score": 100.0,
+        "breakdown": {
+          "location": 35.0,
+          "category": 35.0,
+          "keyword": 30.0
+        }
+      },
+      {
+        "title": "【模拟】风险管理实习",
+        "score": 100.0,
+        "breakdown": {
+          "location": 35.0,
+          "category": 35.0,
+          "keyword": 30.0
+        }
+      },
+      {
+        "title": "【模拟】量化研究实习",
+        "score": 100.0,
+        "breakdown": {
+          "location": 35.0,
+          "category": 35.0,
+          "keyword": 30.0
+        }
+      },
+      {
+        "title": "【模拟】金融科技产品实习",
+        "score": 100.0,
+        "breakdown": {
+          "location": 35.0,
+          "category": 35.0,
+          "keyword": 30.0
+        }
+      },
+      {
+        "title": "【模拟】金融数据分析实习",
+        "score": 100.0,
+        "breakdown": {
+          "location": 35.0,
+          "category": 35.0,
+          "keyword": 30.0
+        }
+      },
+      {
+        "title": "【模拟】资产管理运营实习",
+        "score": 100.0,
+        "breakdown": {
+          "location": 35.0,
+          "category": 35.0,
+          "keyword": 30.0
+        }
+      },
+      {
+        "title": "【模拟】企业战略分析实习",
+        "score": 100.0,
+        "breakdown": {
+          "location": 35.0,
+          "category": 35.0,
+          "keyword": 30.0
+        }
+      }
+    ]
+  },
+  {
+    "query": "香港 FinTech 比赛",
+    "preference": {
+      "categories": [
+        "经管比赛"
+      ],
+      "locations": [
+        "香港"
+      ],
+      "keywords": [],
+      "exclude_keywords": []
+    },
+    "total": 0,
+    "score_min": null,
+    "score_median": null,
+    "score_max": null,
+    "high_match_count": 0,
+    "priority_range": [
+      null,
+      null
+    ],
+    "items": []
+  },
+  {
+    "query": "深圳投行实习",
+    "preference": {
+      "categories": [
+        "金融实习"
+      ],
+      "locations": [
+        "深圳"
+      ],
+      "keywords": [
+        "投行"
+      ],
+      "exclude_keywords": []
+    },
+    "total": 3,
+    "score_min": 70.0,
+    "score_median": 70.0,
+    "score_max": 70.0,
+    "high_match_count": 0,
+    "priority_range": [
+      56.0,
+      59.0
+    ],
+    "items": [
+      {
+        "title": "【模拟】行业研究实习",
+        "score": 70.0,
+        "breakdown": {
+          "location": 35.0,
+          "category": 35.0,
+          "keyword": 0.0
+        }
+      },
+      {
+        "title": "【模拟】量化研究实习",
+        "score": 70.0,
+        "breakdown": {
+          "location": 35.0,
+          "category": 35.0,
+          "keyword": 0.0
+        }
+      },
+      {
+        "title": "【模拟】企业战略分析实习",
+        "score": 70.0,
+        "breakdown": {
+          "location": 35.0,
+          "category": 35.0,
+          "keyword": 0.0
+        }
+      }
+    ]
+  },
+  {
+    "query": "澳门科研机会",
+    "preference": {
+      "categories": [
+        "科研机会"
+      ],
+      "locations": [
+        "澳门"
+      ],
+      "keywords": [],
+      "exclude_keywords": []
+    },
+    "total": 0,
+    "score_min": null,
+    "score_median": null,
+    "score_max": null,
+    "high_match_count": 0,
+    "priority_range": [
+      null,
+      null
+    ],
+    "items": []
+  },
+  {
+    "query": "金融机会但不要销售",
+    "preference": {
+      "categories": [],
+      "locations": [],
+      "keywords": [
+        "金融"
+      ],
+      "exclude_keywords": [
+        "销售"
+      ]
+    },
+    "total": 13,
+    "score_min": 30.0,
+    "score_median": 30.0,
+    "score_max": 30.0,
+    "high_match_count": 0,
+    "priority_range": [
+      24.0,
+      30.0
+    ],
+    "items": [
+      {
+        "title": "【模拟】投行分析实习",
+        "score": 30.0,
+        "breakdown": {
+          "location": 0,
+          "category": 0,
+          "keyword": 30.0
+        }
+      },
+      {
+        "title": "【模拟】行业研究实习",
+        "score": 30.0,
+        "breakdown": {
+          "location": 0,
+          "category": 0,
+          "keyword": 30.0
+        }
+      },
+      {
+        "title": "【模拟】公司金融研究助理",
+        "score": 30.0,
+        "breakdown": {
+          "location": 0,
+          "category": 0,
+          "keyword": 30.0
+        }
+      },
+      {
+        "title": "【模拟】资产管理实习",
+        "score": 30.0,
+        "breakdown": {
+          "location": 0,
+          "category": 0,
+          "keyword": 30.0
+        }
+      },
+      {
+        "title": "【模拟】风险管理实习",
+        "score": 30.0,
+        "breakdown": {
+          "location": 0,
+          "category": 0,
+          "keyword": 30.0
+        }
+      },
+      {
+        "title": "【模拟】量化研究实习",
+        "score": 30.0,
+        "breakdown": {
+          "location": 0,
+          "category": 0,
+          "keyword": 30.0
+        }
+      },
+      {
+        "title": "【模拟】绿色金融商业方案赛",
+        "score": 30.0,
+        "breakdown": {
+          "location": 0,
+          "category": 0,
+          "keyword": 30.0
+        }
+      },
+      {
+        "title": "【模拟】金融科技产品实习",
+        "score": 30.0,
+        "breakdown": {
+          "location": 0,
+          "category": 0,
+          "keyword": 30.0
+        }
+      },
+      {
+        "title": "【模拟】金融数据分析实习",
+        "score": 30.0,
+        "breakdown": {
+          "location": 0,
+          "category": 0,
+          "keyword": 30.0
+        }
+      },
+      {
+        "title": "【模拟】资产管理运营实习",
+        "score": 30.0,
+        "breakdown": {
+          "location": 0,
+          "category": 0,
+          "keyword": 30.0
+        }
+      },
+      {
+        "title": "【模拟】企业战略分析实习",
+        "score": 30.0,
+        "breakdown": {
+          "location": 0,
+          "category": 0,
+          "keyword": 30.0
+        }
+      },
+      {
+        "title": "【模拟】金融研究夏令营预报名",
+        "score": 30.0,
+        "breakdown": {
+          "location": 0,
+          "category": 0,
+          "keyword": 30.0
+        }
+      },
+      {
+        "title": "【模拟】跨境金融研究助理",
+        "score": 30.0,
+        "breakdown": {
+          "location": 0,
+          "category": 0,
+          "keyword": 30.0
+        }
+      }
+    ]
+  },
+  {
+    "query": "我是金融专业大三学生，想找广州、深圳、香港、澳门适合本科生的金融、券商、投行和 FinTech 机会，优先实习和比赛，不要销售岗位。",
+    "preference": {
+      "categories": [
+        "金融实习",
+        "经管比赛"
+      ],
+      "locations": [
+        "广州",
+        "深圳",
+        "香港",
+        "澳门"
+      ],
+      "keywords": [
+        "金融",
+        "投行"
+      ],
+      "exclude_keywords": [
+        "销售"
+      ]
+    },
+    "total": 11,
+    "score_min": 70.0,
+    "score_median": 85.0,
+    "score_max": 100.0,
+    "high_match_count": 10,
+    "priority_range": [
+      56.0,
+      86.0
+    ],
+    "items": [
+      {
+        "title": "【模拟】投行分析实习",
+        "score": 100.0,
+        "breakdown": {
+          "location": 35.0,
+          "category": 35.0,
+          "keyword": 30.0
+        }
+      },
+      {
+        "title": "【模拟】行业研究实习",
+        "score": 85.0,
+        "breakdown": {
+          "location": 35.0,
+          "category": 35.0,
+          "keyword": 15.0
+        }
+      },
+      {
+        "title": "【模拟】资产管理实习",
+        "score": 85.0,
+        "breakdown": {
+          "location": 35.0,
+          "category": 35.0,
+          "keyword": 15.0
+        }
+      },
+      {
+        "title": "【模拟】风险管理实习",
+        "score": 85.0,
+        "breakdown": {
+          "location": 35.0,
+          "category": 35.0,
+          "keyword": 15.0
+        }
+      },
+      {
+        "title": "【模拟】量化研究实习",
+        "score": 85.0,
+        "breakdown": {
+          "location": 35.0,
+          "category": 35.0,
+          "keyword": 15.0
+        }
+      },
+      {
+        "title": "【模拟】绿色金融商业方案赛",
+        "score": 85.0,
+        "breakdown": {
+          "location": 35.0,
+          "category": 35.0,
+          "keyword": 15.0
+        }
+      },
+      {
+        "title": "【模拟】金融科技产品实习",
+        "score": 85.0,
+        "breakdown": {
+          "location": 35.0,
+          "category": 35.0,
+          "keyword": 15.0
+        }
+      },
+      {
+        "title": "【模拟】金融数据分析实习",
+        "score": 85.0,
+        "breakdown": {
+          "location": 35.0,
+          "category": 35.0,
+          "keyword": 15.0
+        }
+      },
+      {
+        "title": "【模拟】资产管理运营实习",
+        "score": 85.0,
+        "breakdown": {
+          "location": 35.0,
+          "category": 35.0,
+          "keyword": 15.0
+        }
+      },
+      {
+        "title": "【模拟】企业战略分析实习",
+        "score": 85.0,
+        "breakdown": {
+          "location": 35.0,
+          "category": 35.0,
+          "keyword": 15.0
+        }
+      },
+      {
+        "title": "【模拟】企业估值案例挑战赛",
+        "score": 70.0,
+        "breakdown": {
+          "location": 35.0,
+          "category": 35.0,
+          "keyword": 0.0
+        }
+      }
+    ]
+  }
+]

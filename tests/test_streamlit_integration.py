@@ -39,7 +39,7 @@ class StreamlitIntegrationTests(unittest.TestCase):
             self.assertIn(result['summary'], [x.value for x in app.info])
             self.assertIn('🤖 AI Brief', [x.value for x in app.subheader])
             self.assertIn('🧠 Understood Preference', [x.value for x in app.subheader])
-            self.assertTrue(any('Rule-based Brief' in x.value for x in app.markdown))
+            self.assertTrue(any('Rule-based Fallback' in x.value for x in app.markdown))
             self.assertTrue(any('Demo / Mock Data' in x.value for x in app.warning))
             app.selectbox[0].select(10).run()
             self.assertFalse(app.exception)
@@ -60,7 +60,7 @@ class StreamlitIntegrationTests(unittest.TestCase):
         self.assertEqual(result['summary_mode'], 'llm')
         self.assertIn(result['summary'], [x.value for x in app.info])
         self.assertIn('AI-generated Brief', [x.value for x in app.caption])
-        self.assertTrue(any('AI-generated Brief' in x.value for x in app.markdown))
+        self.assertTrue(any('Qwen Enhanced' in x.value for x in app.markdown))
 
     def test_llm_failures_preserve_deterministic_pipeline(self):
         # Reuse one retrieval snapshot: fetched_at legitimately changes per fetch.

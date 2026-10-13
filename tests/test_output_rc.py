@@ -70,7 +70,7 @@ class OutputRCTests(unittest.TestCase):
 
     def test_mock_and_live_modes(self):
         self.assertEqual(describe_items([item()], requested_mode='mock')['data_source_mode'], 'Mock Data')
-        for mode, label in [('web', 'Web'), ('database', 'Database')]:
+        for mode, label in [('web', 'Web Data'), ('database', 'Database')]:
             with self.subTest(mode=mode):
                 stats = describe_items([item(source='Official fixture')], requested_mode=mode)
                 self.assertEqual(stats['data_source_mode'], label)
@@ -154,7 +154,7 @@ class OutputRCTests(unittest.TestCase):
         result = build_brief(PREF, [item()])
         with patch.dict(os.environ, {'BRIEF_LLM_API_KEY': 'test-placeholder'}):
             app = self.run_ui(result)
-        self.assertTrue(any('Rule-based Brief' in entry.value for entry in app.markdown))
+        self.assertTrue(any('Rule-based Fallback' in entry.value for entry in app.markdown))
         self.assertFalse(any('AI-generated Brief' in entry.value for entry in app.markdown))
 
 

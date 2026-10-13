@@ -44,9 +44,14 @@ with st.sidebar:
     st.subheader("Agent Mode")
     if result:
         enhanced = result.get("summary_mode") == "llm"
-        st.write("🟢 AI-generated Brief" if enhanced else "🟡 Rule-based Brief")
+        qwen_enhanced = (enhanced and result.get('summary_provider') == 'qwen'
+                         and result.get('input_mode') == 'llm' and result.get('input_provider') == 'qwen')
+        st.write("🟢 Qwen Enhanced" if qwen_enhanced else "🟡 Rule-based Fallback" if not enhanced or result.get('input_mode') != 'llm' else "🟢 LLM Enhanced")
+        st.caption("AI-generated Brief" if enhanced else "Rule-based Brief")
         st.caption("本次摘要使用 LLM 选择经核实的事实措辞。" if enhanced else
                    "本次摘要由规则生成；未使用 LLM 摘要，或 LLM 调用未通过校验。")
+        if enhanced and result.get('input_mode') != 'llm':
+            st.caption("Input Agent 使用规则回退；摘要阶段使用 LLM。")
     else:
         st.write("尚未生成 Brief")
         st.caption("检索后显示本次实际摘要模式。")
@@ -69,11 +74,17 @@ if result is not None:
         as_of = None
     stats = describe_items(items, as_of=as_of,
                            requested_mode=st.session_state.get("retrieval_mode", "mock"))
+    retrieval = result.get('retrieval') or {}
+    source_mode = retrieval.get('data_source_mode') or stats['data_source_mode']
+    mock_count = retrieval.get('mock_count', stats['mock_count'])
+    fallback = retrieval.get('fallback', stats['retrieval_fallback'])
     today = date.fromisoformat(stats["as_of"])
-    if stats["mock_count"] or stats["data_source_mode"] == "Mock Data":
+    if mock_count or source_mode == "Mock Data":
         st.warning("Demo / Mock Data：模拟机会，非真实招聘或报名信息。")
-    if stats["retrieval_fallback"]:
+    if fallback:
         st.warning("实时数据获取失败或无可用数据，本次使用 Demo Mock Data。")
+    if source_mode == 'Web Data':
+        st.caption("真实来源记录不等于已确认可申请的机会；申请资格及截止日期请以官方来源为准。")
     st.subheader("🤖 AI Brief")
     st.caption("AI-generated Brief" if result.get("summary_mode") == "llm" else "Rule-based Brief")
     st.info(result.get("summary") or "本次未生成摘要，请查看下方结果。")
@@ -98,11 +109,13 @@ if result is not None:
     a.metric("Total Opportunities", stats["total"])
     b.metric("High Match", stats["high_match"], help="已有 Match Score ≥ 80 的条目数量，不代表录取概率。")
     c.metric("Urgent Deadline", stats["urgent_deadline"], help="从今天起 7 天内截止，包含今天；不含已过期或日期未知条目。")
-    d.metric("Data Source Mode", stats["data_source_mode"])
+    d.metric("Data Source Mode", source_mode)
     st.caption(f"统计日期：{stats['as_of']}（北京时间） · 高匹配 ≥ 80 · 临近截止 0–7 天（含今天）")
     st.subheader("推荐机会")
     st.caption("Match Score：与你需求的匹配程度。Priority Score：结合匹配度、时效和截止时间后的推荐优先级。")
     if not items:
+        if source_mode == 'Web Data' and retrieval.get('retrieved_count', 0):
+            st.caption(f"已取得 {retrieval['retrieved_count']} 条真实来源记录，本次筛选后为 0 条。地点未注明等条件可能影响匹配；未改用 Mock 数据。")
         st.info("暂无匹配机会。可以减少地点限制或调整机会类型后重试。")
     else:
         show_count = st.selectbox("展示数量", [5, 10, 20], index=0)

@@ -29,14 +29,14 @@ def rank(pref, items, **kwargs):
 class RankingTests(unittest.TestCase):
     def test_location_adds_match_points(self):
         self.assertEqual(rank(preference(), [item()])[0]["match_score"], 100)
-        self.assertEqual(rank(preference(locations=[]), [item()])[0]["match_score"], 60)
+        self.assertEqual(rank(preference(locations=[]), [item()])[0]["match_score"], 65)
 
     def test_category_adds_match_points(self):
-        self.assertEqual(rank(preference(categories=[]), [item()])[0]["match_score"], 60)
+        self.assertEqual(rank(preference(categories=[]), [item()])[0]["match_score"], 65)
 
     def test_keyword_adds_match_points(self):
         scores = rank(preference(), [item("yes"), item("no", title="运营实习")])
-        self.assertEqual([row["match_score"] for row in scores], [100, 80])
+        self.assertEqual([row["match_score"] for row in scores], [100, 70])
 
     def test_location_and_category_remain_hard_filters(self):
         self.assertEqual(rank(preference(), [item(location="广州"), item(category="科研机会")]), [])
@@ -51,7 +51,7 @@ class RankingTests(unittest.TestCase):
     def test_old_explanations_do_not_trigger_exclusion_or_keyword_match(self):
         row = item(title="实习", why_recommended=["量化销售 +100"])
         result = rank(preference(exclude_keywords=["销售"]), [row])
-        self.assertEqual(result[0]["match_score"], 80)
+        self.assertEqual(result[0]["match_score"], 70)
 
     def test_deadline_increases_priority_even_at_full_match(self):
         result = rank(preference(), [item("later", deadline="2026-11-01"), item("soon", deadline="2026-10-06")])
@@ -101,7 +101,7 @@ class RankingTests(unittest.TestCase):
 
     def test_explicit_preference_priority_changes_order(self):
         rows = [item("keyword"), item("urgent", title="实习", deadline="2026-10-05", published_at="2026-10-04")]
-        self.assertEqual(rank(preference(), rows)[0]["job_id"], "urgent")
+        self.assertEqual(rank(preference(priority_weights={"keyword": 0.5}), rows)[0]["job_id"], "urgent")
         self.assertEqual(rank(preference(priority_weights={"keyword": 3}), rows)[0]["job_id"], "keyword")
 
     def test_explanations_and_breakdowns_reconcile(self):

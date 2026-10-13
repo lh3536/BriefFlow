@@ -101,13 +101,13 @@ def rank_items(preference: dict, items: list[dict], *, as_of: date | None = None
         matched_keywords = [word for word in keywords if word.casefold() in match_text]
         contributions = {"location": weights["location"] if locations else 0,
                          "category": weights["category"] if categories else 0,
-                         "keyword": weights["keyword"] if matched_keywords else 0}
+                         "keyword": round(weights["keyword"] * len(matched_keywords) / len(keywords), 2) if keywords else 0}
         match_score = round(sum(contributions.values()), 2)
         if match_score <= 0:
             continue
         labels = {"location": f"地点匹配（{item.get('location', '')}）",
                   "category": f"类别匹配（{item.get('category', '')}）",
-                  "keyword": f"关键词匹配（{'、'.join(matched_keywords)}）"}
+                  "keyword": f"关键词匹配（{'、'.join(matched_keywords)}；覆盖 {len(matched_keywords)}/{len(keywords)}）"}
         reasons = [f"{labels[key]}+{value:g}" for key, value in contributions.items() if value]
         deadline, published = _date(item.get("deadline")), _date(item.get("published_at"))
         expired = deadline is not None and deadline < today

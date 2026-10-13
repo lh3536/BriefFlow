@@ -9,6 +9,7 @@ import re
 import unicodedata
 
 from backend.input_agent.llm import merge_preferences, parse_with_llm
+from backend.llm import llm_provider
 
 
 _EXCLUSION = re.compile(
@@ -18,7 +19,7 @@ _EXCLUSION = re.compile(
 )
 
 
-def parse_user_request(text: str) -> dict[str, list[str]]:
+def parse_user_request(text: str, *, trace: dict | None = None) -> dict[str, list[str]]:
     """Return categories, locations, keywords and exclude_keywords lists.
 
     Rule results are always computed; when an LLM is configured its validated
@@ -31,9 +32,14 @@ def parse_user_request(text: str) -> dict[str, list[str]]:
     normalized = unicodedata.normalize("NFKC", text).strip()
 
     rule_result = _rule_parse(normalized)
+    if trace is not None:
+        trace.update(input_mode='rule', input_provider=None)
     if not normalized:
         return rule_result
-    return merge_preferences(rule_result, parse_with_llm(normalized))
+    parsed = parse_with_llm(normalized)
+    if trace is not None and parsed is not None and any(parsed.values()):
+        trace.update(input_mode='llm', input_provider=llm_provider())
+    return merge_preferences(rule_result, parsed)
 
 
 def _rule_parse(text: str) -> dict[str, list[str]]:

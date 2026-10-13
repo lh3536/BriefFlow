@@ -6,8 +6,8 @@ best-effort; every call site falls back to deterministic rules on failure.
 
 Configuration via environment variables or a repo-root .env file:
     BRIEF_LLM_API_KEY   - required to enable; missing means LLM disabled
-    BRIEF_LLM_BASE_URL  - OpenAI-compatible endpoint, default https://api.openai.com/v1
-    BRIEF_LLM_MODEL     - default gpt-4o-mini
+    BRIEF_LLM_BASE_URL  - default https://dashscope.aliyuncs.com/compatible-mode/v1
+    BRIEF_LLM_MODEL     - default qwen-plus
     BRIEF_LLM_TIMEOUT   - request timeout in seconds, default 30
     BRIEF_LLM_TEMPERATURE - optional temperature; omitted by default (some models reject 0)
 """
@@ -18,9 +18,10 @@ from math import isfinite
 import os
 from pathlib import Path
 import urllib.request
+from urllib.parse import urlsplit
 
-_DEFAULT_BASE_URL = "https://api.openai.com/v1"
-_DEFAULT_MODEL = "gpt-4o-mini"
+_DEFAULT_BASE_URL = "https://dashscope.aliyuncs.com/compatible-mode/v1"
+_DEFAULT_MODEL = "qwen-plus"
 _DEFAULT_TIMEOUT = 30.0
 
 
@@ -61,6 +62,18 @@ def _config() -> dict:
 def llm_available() -> bool:
     """True only when an API key is configured; never raises."""
     return bool(_config()["api_key"])
+
+
+def llm_provider() -> str:
+    """Non-secret configured provider; success must be established by each agent."""
+    cfg = _config()
+    try:
+        host = urlsplit(cfg['base_url']).hostname or ''
+    except ValueError:
+        return 'openai-compatible'
+    return ('qwen' if cfg['model'].lower().startswith('qwen')
+            and (host == 'dashscope.aliyuncs.com' or host.endswith('.aliyuncs.com'))
+            else 'openai-compatible')
 
 
 def chat_completion(messages: list[dict], *, max_tokens: int = 4096) -> str:

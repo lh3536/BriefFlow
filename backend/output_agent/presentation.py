@@ -33,7 +33,7 @@ def describe_items(items: list[dict], *, as_of: date | None = None,
     elif mode == "mock" or mode not in ("web", "database"):
         source = "Mock Data" if not items else "Unknown / 来源待核实"
     else:
-        source = {"web": "Web", "database": "Database"}[mode]
+        source = {"web": "Web Data", "database": "Database"}[mode]
         if not items:
             source += " / 无结果，来源未确认"
     return {
