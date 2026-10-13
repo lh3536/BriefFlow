@@ -1,4 +1,4 @@
-# Retrieval / Database V0.1
+# Retrieval / Database V0.2（待评审）
 
 流程：Data Source → Fetch → Normalize → Validate → Deduplicate → Return Items。
 Router 继续调用 `get_items(preference)`，不需要知道来源；偏好筛选与评分仍属于 Ranking。
@@ -9,14 +9,15 @@ Router 继续调用 `get_items(preference)`，不需要知道来源；偏好筛�
 | 模式 | 数据来源 | 行为 |
 |---|---|---|
 | `mock`（默认） | `data/mock/mock_db.json` | 离线读取现有 15 条 Mock Data，不写数据库 |
-| `web` | [UKRI 官方 Funding Finder RSS](https://www.ukri.org/opportunity/feed/) | 一次公开请求，清洗后自动写入 SQLite，再返回结果 |
+| `web` | UKRI RSS、挑战杯、中金所 | 公开白名单请求；挑战杯/中金所最多各读 3 个详情页，清洗后写入 SQLite |
 | `database` | 本地 SQLite `items` 表 | 读取已有记录，重新校验和去重；不请求网络 |
 
 UKRI 来源页面：[Funding finder](https://www.ukri.org/opportunity/)。它发布科研资助机会，
-不是粤港澳实习源，也不代表本科生有申请资格。仅接入这个 RSS，不抓详情页，不分页，
-不登录，不绕过验证码或付费墙。每次最多 20 条、2 MB，网络超时 15 秒，无自动重试。
+不是粤港澳实习源，也不代表本科生有申请资格。挑战杯和中金所只访问审计过的公开
+列表/详情路径，不登录，不绕过验证码或付费墙。单响应最多 2 MB，网络超时 15 秒，
+列表最多 20 条，挑战杯/中金所每轮最多读取 3 个详情页，详情请求之间等待 1 秒。
 
-2026-10-03 实际抓取返回 HTTP 200、20 条记录。离线解析样本保存在
+UKRI 在 2026-10-03 实际抓取返回 HTTP 200、20 条记录。离线解析样本保存在
 `tests/fixtures/ukri_excerpt.xml`，含本次响应前两条的标题、链接、发布时间；
 说明见同目录 `ukri_excerpt_README.md`。测试不依赖实时网络，也不会将样本当成最新数据。
 本次实测 Web 接收 20 条、SQLite 读回 20 条，`科研机会` 经 Router 返回 20 条；未触发 Mock 回退。
@@ -96,7 +97,8 @@ Router 可通过环境变量 `BRIEFFLOW_RETRIEVAL_MODE=mock|database|web` 切换
 同时补充真实响应 fixture、无效记录与网络故障测试。不要把网站专有字段传给 Router。
 不需要改 Ranking 或 Input/Output Agent。
 
-本版无调度、数据库迁移、过期记录清理、详情页资格解析或语言翻译。
+本版无调度、正式数据库迁移、过期记录清理或语言翻译。挑战杯/中金所详情正文已用于
+summary 和确定性 deadline；没有明确地点时仍写“未注明”，不会把全国赛事硬写成某城市。
 DB 可包含历史记录，Web feed 也可能包含已截止/邀请制机会；未判断是否可申请。
 未注明地点的 UKRI 数据会被当前指定四城的 Ranking 筛选掉，这是现有规则的正常行为。
 可用 `run_brief_flow("科研机会")` 演示真实数据全流程，结果仍须查原文资格。
