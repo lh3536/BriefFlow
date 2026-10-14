@@ -47,3 +47,25 @@ Live 验收数据库位于本机临时目录，未提交 Git；上述数字来�
 2. Ranking Owner只确认“未注明/全国”如何参与地点过滤，并在自己的分支实现。
 3. `feature/retrieval-round2 -> dev` 通过 review 和 CI 后合并。
 4. 再单开数据库正式化任务，由数据负责人维护唯一迁移链。
+
+## D10 区域官方来源增量（2026-10-14）
+
+分支：`feature/d10-official-opportunity-sources`，基础：队长
+`feature/final-team-integration`（`a97ccfc`）。
+
+- 新增 HKEX Early Careers、澳门政府新闻局官方 RSS、香港证监会实习三个来源；没有修改
+  Router、Ranking、Agent、前端或数据库表结构。
+- HKEX 只截取 Summer Internship 段，避免同页 Graduate Programme 污染；当前真实记录
+  截止 `2026-10-25`，地点香港，类别金融实习。
+- 澳门政府源严格限制 `www.gcs.gov.mo/detail/zh-hans/`，先按学生/青年比赛标题过滤，详情
+  请求遵守 robots.txt 的 20 秒 crawl-delay；当前真实大学生短视频比赛截止 `2026-10-23`。
+- SFC 监测两个固定官方实习项目；2026-10-14 当前批次已截止或缺日级截止，因此正确输出 0。
+- 截止工具增加页面实际出现的英文月份、`open until`、`on or before` 与日-月-年支持；
+  缺年份仍不使用抓取日猜测。澳门只有 RSS 发布时间可作锚点时才允许同年，跨年返回空。
+
+验收：Retrieval 专项 `42 passed, 11 subtests passed`；新增文件 ruff 与 `git diff --check`
+通过；完整 Web Mode 实际取得 33 条（UKRI 20、挑战杯 10、中金所 1、HKEX 1、澳门 1、
+SFC 0），默认粤港澳金融实习画像从缓存运行得到 HKEX 1 条、match score 100。
+
+当前机器的全仓测试会在未改动的 `FastAPI TestClient` 首次请求处挂起，单独 `/api/health`
+也可复现；因此没有把全仓测试写成通过。该环境问题与 Retrieval 专项测试分开交接。

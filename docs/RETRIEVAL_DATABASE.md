@@ -9,13 +9,17 @@ Router 继续调用 `get_items(preference)`，不需要知道来源；偏好筛�
 | 模式 | 数据来源 | 行为 |
 |---|---|---|
 | `mock`（默认） | `data/mock/mock_db.json` | 离线读取现有 15 条 Mock Data，不写数据库 |
-| `web` | UKRI RSS、挑战杯、中金所 | 公开白名单请求；挑战杯/中金所最多各读 3 个详情页，清洗后写入 SQLite |
+| `web` | UKRI RSS、挑战杯、中金所、HKEX、澳门政府新闻局、香港证监会 | 公开白名单请求；详情抓取有 host、大小和数量边界，清洗后写入 SQLite |
 | `database` | 本地 SQLite `items` 表 | 读取已有记录，重新校验和去重；不请求网络 |
 
 UKRI 来源页面：[Funding finder](https://www.ukri.org/opportunity/)。它发布科研资助机会，
 不是粤港澳实习源，也不代表本科生有申请资格。挑战杯和中金所只访问审计过的公开
 列表/详情路径，不登录，不绕过验证码或付费墙。单响应最多 2 MB，网络超时 15 秒，
 列表最多 20 条，挑战杯/中金所每轮最多读取 3 个详情页，详情请求之间等待 1 秒。
+
+新增区域来源：HKEX Early Careers 只截取 Summer Internship 段；澳门政府新闻局只从
+官方 RSS 进入官方详情，并按 robots.txt 等待 20 秒；香港证监会只监测两个固定官方
+实习项目页。三者都只输出具有明确且尚未过期截止证据的记录。
 
 UKRI 在 2026-10-03 实际抓取返回 HTTP 200、20 条记录。离线解析样本保存在
 `tests/fixtures/ukri_excerpt.xml`，含本次响应前两条的标题、链接、发布时间；

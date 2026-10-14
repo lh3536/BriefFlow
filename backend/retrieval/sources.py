@@ -3,6 +3,7 @@
 import logging
 import re
 import xml.etree.ElementTree as ET
+from datetime import date, datetime, timedelta, timezone
 from email.utils import parsedate_to_datetime
 from html.parser import HTMLParser
 from time import sleep
@@ -18,12 +19,38 @@ TIAOZHANBEI_URL = "https://www.tiaozhanbei.net/tzb"
 TIAOZHANBEI_SOURCE = "挑战杯官网"
 CFFEX_URL = "http://www.cffex.com.cn/cn/jysdt.html"
 CFFEX_SOURCE = "中国金融期货交易所"
+HKEX_URL = "https://www.hkexgroup.com/About-HKEX/Careers-at-HKEX/Early-Careers?sc_lang=en"
+HKEX_SOURCE = "香港交易所"
+MACAO_GCS_URL = "https://govinfohub.gcs.gov.mo/api/rss/n/zh-hans"
+MACAO_GCS_SOURCE = "澳门特别行政区政府新闻局"
+SFC_SOURCE = "香港证券及期货事务监察委员会"
+SFC_URLS = (
+    (
+        (
+            "https://www.sfc.hk/en/Career/Why-the-SFC/Join-us-as-an-Intern/"
+            "Summer-and-Winter-Internship-Programme"
+        ),
+        "SFC Summer and Winter Internship Programme",
+    ),
+    (
+        (
+            "https://www.sfc.hk/en/Career/Why-the-SFC/Join-us-as-an-Intern/"
+            "Sustainable-Finance-Internship-Programme"
+        ),
+        "SFC Sustainable Finance Internship Programme",
+    ),
+)
 MAX_BYTES = 2_000_000
 MAX_ITEMS = 20
 MAX_DETAIL_ITEMS = 3
 DETAIL_DELAY_SECONDS = 1.0
+MACAO_GCS_DELAY_SECONDS = 20.0
+LOCAL_TIMEZONE = timezone(timedelta(hours=8))
 
-WEB_SOURCES = [UKRI_SOURCE, TIAOZHANBEI_SOURCE, CFFEX_SOURCE]
+WEB_SOURCES = [
+    UKRI_SOURCE, TIAOZHANBEI_SOURCE, CFFEX_SOURCE,
+    HKEX_SOURCE, MACAO_GCS_SOURCE, SFC_SOURCE,
+]
 
 
 class _PlainText(HTMLParser):
@@ -84,6 +111,28 @@ def _fetch_html(url: str, expected_host: str) -> str:
     if len(payload) > MAX_BYTES:
         raise ValueError("Response exceeds size limit")
     return payload.decode("utf-8", errors="replace")
+
+
+def _fetch_bytes(url: str, expected_host: str, accept: str) -> bytes:
+    request = Request(url, headers={"User-Agent": "BriefFlow/0.1 public reader", "Accept": accept})
+    with urlopen(request, timeout=15) as response:
+        if urlsplit(response.url).hostname != expected_host:
+            raise ValueError("Unexpected source redirect")
+        payload = response.read(MAX_BYTES + 1)
+    if len(payload) > MAX_BYTES:
+        raise ValueError("Response exceeds size limit")
+    return payload
+
+
+def _today() -> date:
+    return datetime.now(LOCAL_TIMEZONE).date()
+
+
+def _is_open(deadline: str, as_of: date | None) -> bool:
+    try:
+        return bool(deadline) and date.fromisoformat(deadline) >= (as_of or _today())
+    except ValueError:
+        return False
 
 
 def parse_tiaozhanbei_detail(html: str, item: dict) -> dict:
@@ -172,6 +221,164 @@ def fetch_ukri() -> list[dict]:
     return parse_ukri_feed(payload)
 
 
+def parse_hkex(html: str, *, as_of: date | None = None) -> list[dict]:
+    """Extract only the current HKEX Summer Internship tab from the shared page."""
+    _, text = _plain_page(html)
+    start = text.find("Starting in mid-June")
+    end = text.find("Successful interns", start)
+    if start < 0 or end < 0:
+        return []
+    section = text[start:end].strip()
+    deadline = extract_deadline(section)
+    if not _is_open(deadline, as_of):
+        return []
+    return [{
+        "title": "HKEX Summer Internship Programme", "organization": HKEX_SOURCE,
+        "location": "香港", "category": "金融实习", "summary": section[:12_000],
+        "source": HKEX_SOURCE, "source_url": HKEX_URL, "published_at": "",
+        "deadline": deadline, "tags": ["香港", "金融", "实习"], "requirements": [],
+    }]
+
+
+def fetch_hkex() -> list[dict]:
+    return parse_hkex(_fetch_html(HKEX_URL, "www.hkexgroup.com"))
+
+
+def _rss_date(raw_date: str) -> str:
+    if not raw_date:
+        return ""
+    try:
+        return parsedate_to_datetime(raw_date).date().isoformat()
+    except (ValueError, TypeError, OverflowError):
+        match = re.search(r"(\d{4})[-/.](\d{1,2})[-/.](\d{1,2})", raw_date)
+        if not match:
+            return ""
+        try:
+            return date(*(int(part) for part in match.groups())).isoformat()
+        except ValueError:
+            return ""
+
+
+def parse_macao_gcs_feed(payload: bytes) -> list[dict]:
+    """Select university/youth competitions from the official Macao news RSS."""
+    if len(payload) > MAX_BYTES or b"<!DOCTYPE" in payload.upper() or b"<!ENTITY" in payload.upper():
+        raise ValueError("RSS exceeds size limit or contains unsupported declarations")
+    root = ET.fromstring(payload)
+    if root.tag != "rss" or root.find("channel") is None:
+        raise ValueError("Expected an RSS channel")
+    items = []
+    for entry in root.findall("./channel/item"):
+        title = " ".join((entry.findtext("title") or "").split())
+        url = (entry.findtext("link") or "").strip()
+        parts = urlsplit(url)
+        if not any(word in title for word in ("比赛", "比賽", "竞赛", "競賽")):
+            continue
+        if not any(word in title for word in ("大学", "大专", "高校", "青年", "學生", "学生", "教青局")):
+            continue
+        if parts.scheme != "https" or parts.hostname != "www.gcs.gov.mo" or not parts.path.startswith("/detail/zh-hans/"):
+            continue
+        items.append({
+            "title": title, "organization": MACAO_GCS_SOURCE, "location": "澳门",
+            "category": "经管比赛", "summary": title, "source": MACAO_GCS_SOURCE,
+            "source_url": url, "published_at": _rss_date(entry.findtext("pubDate", "")),
+            "deadline": "", "tags": ["澳门", "竞赛"], "requirements": [],
+        })
+        if len(items) >= MAX_DETAIL_ITEMS:
+            break
+    return items
+
+
+def _macao_deadline(text: str, published_at: str) -> str:
+    direct = extract_deadline(text)
+    if direct:
+        return direct
+    registration = re.search(
+        r"即日起至\s*(\d{4})\s*年\s*(\d{1,2})\s*月\s*(\d{1,2})\s*日[^。；;\n]{0,40}?报名",
+        text,
+    )
+    if registration:
+        try:
+            return date(*(int(part) for part in registration.groups())).isoformat()
+        except ValueError:
+            return ""
+    try:
+        published = date.fromisoformat(published_at)
+    except ValueError:
+        return ""
+    for segment in re.split(r"[。；;！!\n]+", text):
+        if not any(hint in segment for hint in ("截止", "截至", "报名期", "報名期", "征件期")):
+            continue
+        tokens = set(re.findall(r"(\d{1,2})\s*月\s*(\d{1,2})\s*日", segment))
+        if len(tokens) != 1:
+            return ""
+        month, day = next(iter(tokens))
+        try:
+            inferred = date(published.year, int(month), int(day))
+        except ValueError:
+            return ""
+        return inferred.isoformat() if inferred >= published else ""
+    return ""
+
+
+def parse_macao_gcs_detail(html: str, item: dict, *, as_of: date | None = None) -> dict | None:
+    _, text = _plain_page(html)
+    deadline = _macao_deadline(text, item.get("published_at", ""))
+    if not _is_open(deadline, as_of):
+        return None
+    return {**item, "summary": text[:12_000] or item["summary"], "deadline": deadline}
+
+
+def fetch_macao_gcs() -> list[dict]:
+    payload = _fetch_bytes(MACAO_GCS_URL, "govinfohub.gcs.gov.mo", "application/rss+xml, application/xml, text/xml")
+    candidates = parse_macao_gcs_feed(payload)
+    items = []
+    for candidate in candidates:
+        sleep(MACAO_GCS_DELAY_SECONDS)
+        try:
+            item = parse_macao_gcs_detail(
+                _fetch_html(candidate["source_url"], "www.gcs.gov.mo"), candidate,
+            )
+        except (OSError, ValueError) as exc:
+            logging.getLogger(__name__).warning(
+                "detail_failed source=%s url=%s reason=%s",
+                candidate["source"], candidate["source_url"], type(exc).__name__,
+            )
+            continue
+        if item is not None:
+            items.append(item)
+    return items
+
+
+def parse_sfc_detail(html: str, title: str, url: str, *, as_of: date | None = None) -> dict | None:
+    _, text = _plain_page(html)
+    deadline = extract_deadline(text)
+    if not _is_open(deadline, as_of):
+        return None
+    return {
+        "title": title, "organization": SFC_SOURCE, "location": "香港",
+        "category": "金融实习", "summary": text[:12_000], "source": SFC_SOURCE,
+        "source_url": url, "published_at": "", "deadline": deadline,
+        "tags": ["香港", "金融", "监管", "实习"], "requirements": [],
+    }
+
+
+def fetch_sfc() -> list[dict]:
+    items = []
+    for index, (url, title) in enumerate(SFC_URLS):
+        if index:
+            sleep(DETAIL_DELAY_SECONDS)
+        try:
+            item = parse_sfc_detail(_fetch_html(url, "www.sfc.hk"), title, url)
+        except (OSError, ValueError) as exc:
+            logging.getLogger(__name__).warning(
+                "detail_failed source=%s url=%s reason=%s", SFC_SOURCE, url, type(exc).__name__,
+            )
+            continue
+        if item is not None:
+            items.append(item)
+    return items
+
+
 def parse_tiaozhanbei(html: str) -> list[dict]:
     items = []
     for path, title in re.findall(r'<a\b[^>]*href="(/article/\d+/)">(.*?)</a>', html, re.DOTALL):
@@ -225,7 +432,10 @@ def fetch_cffex() -> list[dict]:
 def fetch_web() -> list[dict]:
     """合并所有公开来源；单源失败不影响其他来源。"""
     items = []
-    for name, fetch in (("ukri", fetch_ukri), ("tiaozhanbei", fetch_tiaozhanbei), ("cffex", fetch_cffex)):
+    for name, fetch in (
+        ("ukri", fetch_ukri), ("tiaozhanbei", fetch_tiaozhanbei), ("cffex", fetch_cffex),
+        ("hkex", fetch_hkex), ("macao_gcs", fetch_macao_gcs), ("sfc", fetch_sfc),
+    ):
         try:
             items.extend(fetch())
         except (OSError, ValueError, ET.ParseError):
