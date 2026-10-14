@@ -10,20 +10,23 @@
 | 来源 | 类别 | 抓取方式 |
 |---|---|---|
 | UKRI 科研资助 RSS | 科研机会 | RSS（xml） |
-| 挑战杯官网「挑战杯动态」 | 经管比赛 | HTML 列表 |
-| 中国金融期货交易所「中金所杯」 | 经管比赛 | HTML 列表 |
+| 挑战杯官网「挑战杯动态」 | 经管比赛 | HTML 列表 + 最多 3 个详情页 |
+| 中国金融期货交易所「中金所杯」 | 经管比赛 | HTML 列表 + 最多 3 个详情页 |
 
 ## 日期
 
 - `published_at`：来源提供的发布时间（UKRI 的 pubDate、中金所的列表日期）。
-- `deadline`：`extract_deadline(text)`（`backend/retrieval/dates.py`）从正文提取，只认
-  「截止/截至」+ 带年份的完整日期，缺年份/多日期冲突一律返回空、不猜测。当前列表级
-  抓取无正文，deadline 暂为空；接入详情页抓取后即可生效。
+- `deadline`：`extract_deadline(text)`（`backend/retrieval/dates.py`）从详情正文提取，只认
+  「截止/截至」或明确「报名时间……至……」中的完整年份日期；缺年份或同一语义片段
+  多日期冲突时返回空，不猜测。
+- 详情页失败时保留列表记录并写 `detail_failed` 警告；不会用标题或抓取日期伪造截止日期。
 
 ## 已知待办
 
 - 真实来源多为全国/国际性，`location` 写成 `"未注明"`；Ranking 目前对 location 做硬过滤，
   指定城市时会全量过滤掉真实条目（见 `docs/retrieval_location_fix.md`，待 Ranking Owner 确认）。
+- 当前 SQLite 是团队 V0.1 兼容缓存，不包含本地原型里的 Alembic 修订链和业务实体表；
+  正式数据库契约仍需 M1/M3/M4 评审，不能把两套 DDL 并行合并。
 
 运行 `python -m backend.retrieval --mode mock` 输出 JSON 与采集统计。
 详见 [RETRIEVAL_DATABASE.md](../../docs/RETRIEVAL_DATABASE.md)。

@@ -11,6 +11,10 @@
 | Main / Frontend Owner | `backend/router` + `backend/main.py` + `frontend` | 主程序、Router、Frontend |
 | Product / Data / Business Owner | `data` + `finance` + product validation | 产品、数据、商业模型、测试与文档 |
 
+Retrieval Owner 的 2026-10-13 交接、验证结果和未完成边界见
+[RETRIEVAL_OWNER_HANDOFF.md](RETRIEVAL_OWNER_HANDOFF.md)。该记录只覆盖数据模块，
+不代表 Agent、Ranking、Frontend 或完整产品已验收。
+
 每个 Owner 后续需要：
 
 1. **Read**：阅读负责模块及 [ARCHITECTURE.md](ARCHITECTURE.md) 的接口约定。

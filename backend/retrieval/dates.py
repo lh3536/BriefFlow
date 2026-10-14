@@ -33,14 +33,15 @@ def _to_iso(token: str) -> str:
 def extract_deadline(text: str) -> str:
     """从正文提取截止日期，返回 'YYYY-MM-DD' 或 ''。
 
-    - 只在含「截止/截至」的句子里找。
+    - 只在含「截止/截至」，或明确「报名时间……至……」的句子里找。
     - 一句话里有多个不同日期（如报名截止与初赛日期并列）无法确定 → 空串。
     - 只有「月日」而无年份 → 空串，不拿抓取年份补齐。
     """
     if not text:
         return ""
     for segment in _SENT_SPLIT.split(text):
-        if not any(hint in segment for hint in _DEADLINE_HINTS):
+        explicit_registration_window = "报名时间" in segment and any(marker in segment for marker in ("至", "到"))
+        if not any(hint in segment for hint in _DEADLINE_HINTS) and not explicit_registration_window:
             continue
         tokens = {token for token in _DATE_RE.findall(segment) if token}
         if len(tokens) != 1:
