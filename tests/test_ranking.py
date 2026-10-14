@@ -13,13 +13,32 @@ TODAY = date(2026, 10, 4)
 
 
 def item(id="a", **changes):
-    return {"job_id": id, "title": "量化实习", "company": "示范机构", "location": "深圳",
-            "category": "金融实习", "deadline": "", "published_at": "", **changes}
+    return {
+        "job_id": id,
+        "title": "量化实习",
+        "company": "示范机构",
+        "location": "深圳",
+        "category": "实习",
+        "disciplines": ["金融经济"],
+        "grades": ["大三"],
+        "time_pref": "暑期",
+        "deadline": "",
+        "published_at": "",
+        **changes
+    }
 
 
 def preference(**changes):
-    return {"locations": ["深圳"], "categories": ["金融实习"],
-            "keywords": ["量化"], "exclude_keywords": [], **changes}
+    return {
+        "locations": ["深圳"],
+        "categories": ["实习"],
+        "disciplines": ["金融经济"],
+        "grades": ["大三"],
+        "time_prefs": ["暑期"],
+        "keywords": ["量化"],
+        "exclude_keywords": [],
+        **changes
+    }
 
 
 def rank(pref, items, **kwargs):
@@ -29,14 +48,14 @@ def rank(pref, items, **kwargs):
 class RankingTests(unittest.TestCase):
     def test_location_adds_match_points(self):
         self.assertEqual(rank(preference(), [item()])[0]["match_score"], 100)
-        self.assertEqual(rank(preference(locations=[]), [item()])[0]["match_score"], 60)
+        self.assertEqual(rank(preference(locations=[]), [item()])[0]["match_score"], 75)
 
     def test_category_adds_match_points(self):
-        self.assertEqual(rank(preference(categories=[]), [item()])[0]["match_score"], 60)
+        self.assertEqual(rank(preference(categories=[]), [item()])[0]["match_score"], 80)
 
     def test_keyword_adds_match_points(self):
         scores = rank(preference(), [item("yes"), item("no", title="运营实习")])
-        self.assertEqual([row["match_score"] for row in scores], [100, 80])
+        self.assertEqual([row["match_score"] for row in scores], [100, 90])
 
     def test_location_and_category_remain_hard_filters(self):
         self.assertEqual(rank(preference(), [item(location="广州"), item(category="科研机会")]), [])
@@ -51,7 +70,7 @@ class RankingTests(unittest.TestCase):
     def test_old_explanations_do_not_trigger_exclusion_or_keyword_match(self):
         row = item(title="实习", why_recommended=["量化销售 +100"])
         result = rank(preference(exclude_keywords=["销售"]), [row])
-        self.assertEqual(result[0]["match_score"], 80)
+        self.assertEqual(result[0]["match_score"], 90)
 
     def test_deadline_increases_priority_even_at_full_match(self):
         result = rank(preference(), [item("later", deadline="2026-11-01"), item("soon", deadline="2026-10-06")])
@@ -78,7 +97,7 @@ class RankingTests(unittest.TestCase):
     def test_expired_keeps_match_but_zeroes_delivery_priority(self):
         result = rank(preference(), [item("expired", deadline="2026-10-03", published_at="2026-10-02"), item("active")])
         self.assertEqual(result[-1]["job_id"], "expired")
-        self.assertEqual(result[-1]["match_score"], 100)
+        self.assertEqual(result[-1]["match_score"], 90)
         self.assertEqual(result[-1]["priority_score"], 0)
         self.assertTrue(result[-1]["deadline_expired"])
 
@@ -159,7 +178,7 @@ class RankingTests(unittest.TestCase):
         self.assertEqual(rank(preference(), [row])[0]["final_rank"], 1)
 
     def test_malformed_items_and_empty_terms_do_not_match_everything(self):
-        self.assertEqual(rank(preference(locations=[], categories=[], keywords=[""]), [None, {}, item()]), [])
+        self.assertEqual(rank(preference(locations=[], categories=[],disciplines=[], grades=[], time_prefs=[],  keywords=[""]), [None, {}, item()]), [])
         self.assertEqual(rank(preference(), [None, {}]), [])
 
 

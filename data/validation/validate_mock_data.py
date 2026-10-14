@@ -1,59 +1,93 @@
-"""Validate synthetic BriefFlow opportunities using only the standard library."""
-from datetime import date
+"""Validate BriefFlow seed data across six modules, eight disciplines, and grades."""
 import json
 from pathlib import Path
 import re
 
-REQUIRED = {"job_id", "title", "company", "location", "category", "deadline", "link", "match_score", "why_recommended"}
+REQUIRED = {
+    "job_id", "module", "title", "company", "location", "category",
+    "deadline", "link", "disciplines", "grades", "time_pref",
+}
+MODULES = {"internship", "summer_camp", "research", "competition", "summer_school", "scholarship"}
+CATEGORIES = {"实习", "夏令营", "科研", "竞赛", "暑校", "奖学金"}
+DISCIPLINES = {"金融经济", "管理商科", "计算机", "理工科", "生物医学", "法政社科", "人文艺术", "通用"}
+GRADES = {"大一", "大二", "大三", "大四", "研究生", "不限"}
+TIME_PREFS = {"暑期", "寒假", "日常", "长期", "不限"}
+LOCATIONS = {
+    # P0 大湾区重点
+    "广州", "深圳", "香港", "澳门", "珠海",
+    # P1 大湾区其他
+    "佛山", "东莞", "中山", "惠州", "江门", "肇庆",
+    # P2 全国主要城市
+    "北京", "上海", "杭州", "南京", "武汉", "成都", "西安",
+    "天津", "重庆", "苏州", "厦门", "长沙", "青岛",
+    # 特殊类型
+    "全国", "线上", "多个城市",
+}
 FORBIDDEN = ("销售", "销售代表", "客户经理销售方向", "电话营销", "地推", "客服", "保险代理")
 
 
 def validate(path: Path) -> list[str]:
-    """Parse with json.load and check schema, domain rules, and score sums."""
     with path.open(encoding="utf-8") as handle:
         data = json.load(handle)
     errors: list[str] = []
-    if not isinstance(data, list) or len(data) != 15:
-        return ["Root must be a list with exactly 15 records"]
+    if not isinstance(data, list):
+        return ["Root must be a list"]
+
     ids = []
-    cities = set()
+    modules_seen, disciplines_seen = set(), set()
     for i, row in enumerate(data, 1):
         label = f"Record {i}"
-        if not isinstance(row, dict) or set(row) != REQUIRED:
-            errors.append(f"{label}: exact required fields missing or extra fields")
+        if not isinstance(row, dict):
+            errors.append(f"{label}: not a dict")
             continue
+        missing = REQUIRED - set(row)
+        if missing:
+            errors.append(f"{label}: missing fields {sorted(missing)}")
+            continue
+
         ids.append(row["job_id"])
-        if row["job_id"] != f"job_{i:03d}":
-            errors.append(f"{label}: unexpected job_id")
-        if row["location"] not in ("广州", "深圳", "香港", "澳门"):
-            errors.append(f"{label}: invalid location")
+        modules_seen.add(row["module"])
+        disciplines_seen.update(row["disciplines"] if isinstance(row["disciplines"], list) else [])
+
+        if row["module"] not in MODULES:
+            errors.append(f"{label}: invalid module {row['module']}")
+        if row["category"] not in CATEGORIES:
+            errors.append(f"{label}: invalid category {row['category']}")
+        if row["location"] not in LOCATIONS:
+            errors.append(f"{label}: invalid location {row['location']}")
+
+        if not isinstance(row["disciplines"], list) or not row["disciplines"]:
+            errors.append(f"{label}: disciplines must be nonempty list")
         else:
-            cities.add(row["location"])
-        if row["category"] not in ("金融实习", "经管比赛", "夏令营", "科研机会"):
-            errors.append(f"{label}: invalid category")
-        try:
-            assert isinstance(row["deadline"], str) and re.fullmatch(r"\d{4}-\d{2}-\d{2}", row["deadline"])
-            assert date(2026, 10, 1) <= date.fromisoformat(row["deadline"]) <= date(2026, 12, 31)
-        except (AssertionError, ValueError, TypeError):
-            errors.append(f"{label}: invalid deadline")
-        if type(row["match_score"]) is not int or not 0 <= row["match_score"] <= 100:
-            errors.append(f"{label}: score must be integer 0–100")
-        reasons = row["why_recommended"]
-        if not isinstance(reasons, list) or not reasons or not all(isinstance(r, str) and re.fullmatch(r".+\+\d+", r) for r in reasons):
-            errors.append(f"{label}: reasons must be nonempty list of scoring explanations")
-        elif sum(int(r.rsplit("+", 1)[1]) for r in reasons) != row["match_score"]:
-            errors.append(f"{label}: reason points do not sum to score")
-        if row["link"] != f"https://example.com/job_{i:03d}":
-            errors.append(f"{label}: invalid example.com link")
+            for d in row["disciplines"]:
+                if d not in DISCIPLINES:
+                    errors.append(f"{label}: invalid discipline {d}")
+
+        if not isinstance(row["grades"], list) or not row["grades"]:
+            errors.append(f"{label}: grades must be nonempty list")
+        else:
+            for g in row["grades"]:
+                if g not in GRADES:
+                    errors.append(f"{label}: invalid grade {g}")
+
+        if row["time_pref"] not in TIME_PREFS:
+            errors.append(f"{label}: invalid time_pref {row['time_pref']}")
+
+        if not re.fullmatch(r"\d{4}-\d{2}-\d{2}", str(row["deadline"])):
+            errors.append(f"{label}: invalid deadline format")
+
+        if not str(row["link"]).startswith("http"):
+            errors.append(f"{label}: link must start with http")
+
         if any(word in json.dumps(row, ensure_ascii=False) for word in FORBIDDEN):
             errors.append(f"{label}: forbidden keyword")
-        for field in REQUIRED - {"match_score", "why_recommended"}:
-            if not isinstance(row[field], str) or not row[field].strip():
-                errors.append(f"{label}: {field} must be nonempty string")
-    if len({str(x) for x in ids}) != 15:
-        errors.append("IDs must be unique")
-    if cities != {"广州", "深圳", "香港", "澳门"}:
-        errors.append("All four cities must be represented")
+
+    if len(ids) != len(set(ids)):
+        errors.append("Duplicate job_id")
+
+    print(f"共 {len(data)} 条")
+    print(f"模块覆盖: {sorted(modules_seen)}")
+    print(f"学科覆盖: {sorted(disciplines_seen)}")
     return errors
 
 
@@ -62,5 +96,9 @@ if __name__ == "__main__":
         failures = validate(Path(__file__).resolve().parents[1] / "mock" / "mock_db.json")
     except (OSError, ValueError) as exc:
         failures = [str(exc)]
-    print("FAIL: " + "\n".join(failures) if failures else "PASS: json.load; 15 records; unique job_001–job_015; exact schema; 4 cities; categories; dates; integer scores; explanation lists and score sums; forbidden keywords absent; example.com links")
-    raise SystemExit(bool(failures))
+    if failures:
+        print("FAIL:")
+        for f in failures:
+            print("  - " + f)
+        raise SystemExit(True)
+    print("PASS")

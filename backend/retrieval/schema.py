@@ -5,10 +5,11 @@ import ipaddress
 import re
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
-CATEGORIES = {"金融实习", "经管比赛", "夏令营", "科研机会"}
+CATEGORIES =  {"实习", "竞赛", "夏令营", "科研", "奖学金", "讲座"}
 FIELDS = (
-    "item_id", "title", "organization", "location", "category", "summary",
-    "source", "source_url", "published_at", "deadline", "tags", "requirements", "last_updated",
+    "item_id", "title", "organization", "location", "category", "module", "summary",
+    "source", "source_url", "published_at", "deadline", "tags", "requirements",
+    "disciplines", "grades", "time_pref", "last_updated",
 )
 
 
@@ -51,12 +52,12 @@ def normalize_item(raw_item: dict) -> dict:
     if not isinstance(raw_item, dict):
         raise ValueError("item must be an object")
     raw = raw_item
-    item = {key: _text(raw, key) for key in FIELDS if key not in ("tags", "requirements")}
+    item = {key: _text(raw, key) for key in FIELDS if key not in ("tags", "requirements", "disciplines", "grades")}
     item["organization"] = _text(raw, "organization", raw.get("company", ""))
     item["source_url"] = canonical_url(_text(raw, "source_url", raw.get("link", "")))
     item["item_id"] = _text(raw, "item_id", raw.get("job_id", "")) or hashlib.sha256(item["source_url"].encode()).hexdigest()[:24]
     item["last_updated"] = item["last_updated"] or datetime.now(timezone.utc).isoformat()
-    for key in ("tags", "requirements"):
+    for key in ("tags", "requirements", "disciplines", "grades"):
         values = raw.get(key, [])
         if not isinstance(values, list) or not all(isinstance(value, str) for value in values):
             raise ValueError(f"{key} must be a list of strings")
