@@ -1,0 +1,6 @@
+{
+  "status": "NOT RUN",
+  "reason": "No local .env or environment BRIEF_LLM_API_KEY",
+  "preference": null,
+  "summary": null
+}

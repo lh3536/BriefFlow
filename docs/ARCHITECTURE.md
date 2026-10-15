@@ -52,12 +52,16 @@ Ranking 在返回副本中替换分数和解释；不修改输入记录或磁盘
 {
   "preference": {"categories": [], "locations": [], "keywords": [], "exclude_keywords": []},
   "total_items": 0,
-  "recommended_items": []
+  "recommended_items": [],
+  "summary": "...",
+  "summary_mode": "deterministic"
 }
 ```
 
-`total_items` 等于推荐列表长度。无匹配时返回空列表。模块通过标准库 Python
-函数调用连接，目前没有 HTTP API、LLM、数据库或网络检索。
+`total_items` 等于推荐列表长度。无匹配时返回空列表。`summary_mode` 是附加
+元数据，取值 `"llm"` 或 `"deterministic"`，标识当前摘要来源，不改变原有四个
+核心字段。模块通过标准库 Python 函数调用连接，目前没有 HTTP API、LLM、数据库
+或网络检索。
 
 ## V0.1 规则与边界
 

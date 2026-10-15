@@ -1,0 +1,37 @@
+{
+  "status": "PASS",
+  "runs": [
+    {
+      "query": "我是金融专业大三学生，想找广州、深圳、香港、澳门适合本科生的金融、券商、投行和 FinTech 机会，优先实习和比赛，不要销售岗位。",
+      "retrieval": {
+        "requested_mode": "web",
+        "data_source_mode": "Web Data",
+        "retrieved_count": 32,
+        "mock_count": 0,
+        "fallback": false
+      },
+      "total_items": 0,
+      "summary": "根据你的需求，本次未找到匹配信息。可以尝试调整地点或机会类型，再查看结果。",
+      "summary_mode": "deterministic",
+      "sources": []
+    },
+    {
+      "query": "金融比赛",
+      "retrieval": {
+        "requested_mode": "web",
+        "data_source_mode": "Web Data",
+        "retrieved_count": 33,
+        "mock_count": 0,
+        "fallback": false
+      },
+      "total_items": 13,
+      "summary": "本次共筛选出 13 条与你需求相关的机会，其中 0 条高度匹配。按当前推荐顺序，建议先查看《第十二届“中金所杯”全国大学生金融知识大赛正式启动》、《挑战杯丨第十五届“挑战杯”新疆维吾尔自治区大学生创业计划竞赛圆满落幕》。",
+      "summary_mode": "deterministic",
+      "sources": [
+        "中国金融期货交易所",
+        "挑战杯官网"
+      ]
+    }
+  ],
+  "note": "City-filtered zero results are genuine; no filters relaxed and no mock substituted."
+}

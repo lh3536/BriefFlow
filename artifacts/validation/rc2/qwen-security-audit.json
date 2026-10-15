@@ -1,0 +1,230 @@
+{
+  "remote_refresh": "PASS: git -c http.version=HTTP/1.1 fetch --all --prune",
+  "refs": [
+    "refs/remotes/origin/dev",
+    "refs/remotes/origin/feature/agent-ao-llm",
+    "refs/remotes/origin/feature/flin-a3a4",
+    "refs/remotes/origin/feature/main-router-frontend",
+    "refs/remotes/origin/feature/ranking-priority",
+    "refs/remotes/origin/feature/retrieval-database",
+    "refs/remotes/origin/feature/retrieval-round2",
+    "refs/remotes/origin/feature/test-merge1",
+    "refs/remotes/origin/integration/streamlit-agent-llm",
+    "refs/remotes/origin/main",
+    "refs/remotes/origin/release/brief-flow-rc1"
+  ],
+  "provider_mentions": [
+    {
+      "ref": "refs/remotes/origin/feature/test-merge1",
+      "file": "backend/llm.py",
+      "line": 20,
+      "terms": [
+        "compatible-mode"
+      ]
+    },
+    {
+      "ref": "refs/remotes/origin/feature/test-merge1",
+      "file": "backend/llm.py",
+      "line": 21,
+      "terms": [
+        "qwen"
+      ]
+    },
+    {
+      "ref": "refs/remotes/origin/feature/test-merge1",
+      "file": "tests/test_agent_llm.py",
+      "line": 10,
+      "terms": [
+        "qwen"
+      ]
+    },
+    {
+      "ref": "refs/remotes/origin/feature/test-merge1",
+      "file": "tests/test_agent_llm.py",
+      "line": 12,
+      "terms": [
+        "compatible-mode"
+      ]
+    },
+    {
+      "ref": "refs/remotes/origin/feature/test-merge1",
+      "file": "tests/test_agent_llm.py",
+      "line": 13,
+      "terms": [
+        "qwen"
+      ]
+    },
+    {
+      "ref": "refs/remotes/origin/release/brief-flow-rc1",
+      "file": "artifacts/validation/AUDIT.md",
+      "line": 25,
+      "terms": [
+        "qwen"
+      ]
+    },
+    {
+      "ref": "refs/remotes/origin/release/brief-flow-rc1",
+      "file": "artifacts/validation/AUDIT.md",
+      "line": 32,
+      "terms": [
+        "qwen"
+      ]
+    },
+    {
+      "ref": "refs/remotes/origin/release/brief-flow-rc1",
+      "file": "artifacts/validation/AUDIT.md",
+      "line": 34,
+      "terms": [
+        "qwen",
+        "compatible-mode"
+      ]
+    },
+    {
+      "ref": "refs/remotes/origin/release/brief-flow-rc1",
+      "file": "artifacts/validation/AUDIT.md",
+      "line": 35,
+      "terms": [
+        "qwen"
+      ]
+    },
+    {
+      "ref": "refs/remotes/origin/release/brief-flow-rc1",
+      "file": "artifacts/validation/AUDIT.md",
+      "line": 36,
+      "terms": [
+        "dashscope",
+        "compatible-mode"
+      ]
+    },
+    {
+      "ref": "refs/remotes/origin/release/brief-flow-rc1",
+      "file": "artifacts/validation/AUDIT.md",
+      "line": 37,
+      "terms": [
+        "qwen"
+      ]
+    },
+    {
+      "ref": "refs/remotes/origin/release/brief-flow-rc1",
+      "file": "artifacts/validation/AUDIT.md",
+      "line": 39,
+      "terms": [
+        "qwen"
+      ]
+    },
+    {
+      "ref": "refs/remotes/origin/release/brief-flow-rc1",
+      "file": "artifacts/validation/RC1_ACCEPTANCE.md",
+      "line": 44,
+      "terms": [
+        "qwen"
+      ]
+    },
+    {
+      "ref": "refs/remotes/origin/release/brief-flow-rc1",
+      "file": "artifacts/validation/RC1_ACCEPTANCE.md",
+      "line": 45,
+      "terms": [
+        "qwen"
+      ]
+    },
+    {
+      "ref": "HEAD",
+      "file": "artifacts/validation/AUDIT.md",
+      "line": 25,
+      "terms": [
+        "qwen"
+      ]
+    },
+    {
+      "ref": "HEAD",
+      "file": "artifacts/validation/AUDIT.md",
+      "line": 32,
+      "terms": [
+        "qwen"
+      ]
+    },
+    {
+      "ref": "HEAD",
+      "file": "artifacts/validation/AUDIT.md",
+      "line": 34,
+      "terms": [
+        "qwen",
+        "compatible-mode"
+      ]
+    },
+    {
+      "ref": "HEAD",
+      "file": "artifacts/validation/AUDIT.md",
+      "line": 35,
+      "terms": [
+        "qwen"
+      ]
+    },
+    {
+      "ref": "HEAD",
+      "file": "artifacts/validation/AUDIT.md",
+      "line": 36,
+      "terms": [
+        "dashscope",
+        "compatible-mode"
+      ]
+    },
+    {
+      "ref": "HEAD",
+      "file": "artifacts/validation/AUDIT.md",
+      "line": 37,
+      "terms": [
+        "qwen"
+      ]
+    },
+    {
+      "ref": "HEAD",
+      "file": "artifacts/validation/AUDIT.md",
+      "line": 39,
+      "terms": [
+        "qwen"
+      ]
+    },
+    {
+      "ref": "HEAD",
+      "file": "artifacts/validation/RC1_ACCEPTANCE.md",
+      "line": 44,
+      "terms": [
+        "qwen"
+      ]
+    },
+    {
+      "ref": "HEAD",
+      "file": "artifacts/validation/RC1_ACCEPTANCE.md",
+      "line": 45,
+      "terms": [
+        "qwen"
+      ]
+    }
+  ],
+  "credential_findings": [
+    {
+      "ref": "refs/remotes/origin/feature/test-merge1",
+      "file": "tests/test_agent_llm.py",
+      "line": 11,
+      "credential_type": "API key (sk-prefixed)"
+    }
+  ],
+  "local_dotenv_exists": false,
+  "environment_key_present": false,
+  "remote_heads": [
+    "origin 0743fe355e6bfbab7d2073fb2a01092a057fbc5a",
+    "origin/dev 0743fe355e6bfbab7d2073fb2a01092a057fbc5a",
+    "origin/feature/agent-ao-llm da386d3968be55d39fa4480aaf678d1e74711b38",
+    "origin/feature/flin-a3a4 69a3979db0585871a899f9f5bad4c88b1c34d2a0",
+    "origin/feature/main-router-frontend 8d6cc40b0cf1d8a500f7923e9a4569f382d05794",
+    "origin/feature/ranking-priority d0d2654c52d6ae03f7120d9ee4508d6378442809",
+    "origin/feature/retrieval-database 0efa453f86cd33c4bb198a502e0fe1a3f996caea",
+    "origin/feature/retrieval-round2 2dcf84213226158076b822d7c82609cd9beb607d",
+    "origin/feature/test-merge1 f8397bb762e962fd8eb00cda34db04b0fcd159ab",
+    "origin/integration/streamlit-agent-llm 7872fca22e7186618cb43682def96ca0225f501a",
+    "origin/main 0743fe355e6bfbab7d2073fb2a01092a057fbc5a",
+    "origin/release/brief-flow-rc1 291c4e515ce9a4d08a80a7d200660842585d78f0"
+  ]
+}

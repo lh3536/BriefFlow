@@ -1,0 +1,14 @@
+{
+  "tracked_file_count": 114,
+  "findings": [],
+  "env_ignored": true,
+  "env_example_key_empty": true,
+  "status": "PASS",
+  "historical_remote_finding": {
+    "ref": "origin/feature/test-merge1",
+    "file": "tests/test_agent_llm.py",
+    "line": 11,
+    "credential_type": "API key (sk-prefixed)",
+    "action": "not copied or used; owner revocation required"
+  }
+}

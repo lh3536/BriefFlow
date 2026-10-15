@@ -1,0 +1,31 @@
+{
+  "sources": [
+    {
+      "source": "UKRI",
+      "status": "PASS",
+      "fetched": 20,
+      "accepted": 20,
+      "rejected": 0,
+      "duplicates": 0
+    },
+    {
+      "source": "挑战杯",
+      "status": "PASS",
+      "fetched": 12,
+      "accepted": 12,
+      "rejected": 0,
+      "duplicates": 0
+    },
+    {
+      "source": "中金所",
+      "status": "PASS",
+      "fetched": 1,
+      "accepted": 1,
+      "rejected": 0,
+      "duplicates": 0
+    }
+  ],
+  "retrieved_real_items": 33,
+  "ranked_for_demo": 0,
+  "ranked_for_research_query": 20
+}

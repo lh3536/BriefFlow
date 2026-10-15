@@ -48,7 +48,7 @@ class RetrievalTests(unittest.TestCase):
         with patch("backend.retrieval.service.fetch_ukri") as fetch:
             items = get_items({})
         fetch.assert_not_called()
-        self.assertEqual(len(items), 20)
+        self.assertEqual(len(items), 60)
         self.assertEqual(items[0]["job_id"], "job_101")
         self.assertEqual(items[0]["source"], "BriefFlow Mock")
         self.assertEqual(MOCK_PATH.read_bytes(), before)
@@ -157,13 +157,13 @@ class RetrievalTests(unittest.TestCase):
 
     def test_empty_database_falls_back_to_mock(self):
         with patch.dict(os.environ, {"BRIEFFLOW_RETRIEVAL_MODE": "database"}), self.assertLogs("backend.retrieval.service", level="WARNING") as logs:
-            self.assertEqual(len(get_items({})), 20)
+            self.assertEqual(len(get_items({})), 60)
         self.assertTrue(any("fallback=mock" in message for message in logs.output))
 
     def test_corrupt_database_falls_back(self):
         self.db.write_bytes(b"not a database")
         with patch.dict(os.environ, {"BRIEFFLOW_RETRIEVAL_MODE": "database"}), self.assertLogs("backend.retrieval.service", level="WARNING"):
-            self.assertEqual(len(get_items({})), 20)
+            self.assertEqual(len(get_items({})), 60)
 
     def test_corrupt_row_skipped_and_counted(self):
         save_items([record(), record(title="Other", source_url="https://example.com/2")], self.db)
@@ -228,13 +228,13 @@ class RetrievalTests(unittest.TestCase):
 
     def test_empty_web_falls_back(self):
         with patch.dict(os.environ, {"BRIEFFLOW_RETRIEVAL_MODE": "web"}), patch("backend.retrieval.service.fetch_ukri", return_value=[]), self.assertLogs("backend.retrieval.service", level="WARNING"):
-            self.assertEqual(len(get_items({})), 20)
+            self.assertEqual(len(get_items({})), 60)
 
     def test_incomplete_response_and_invalid_xml_fall_back(self):
         import xml.etree.ElementTree as ET
         for error in (IncompleteRead(b"partial"), ET.ParseError("invalid XML")):
             with self.subTest(error=type(error).__name__), patch.dict(os.environ, {"BRIEFFLOW_RETRIEVAL_MODE": "web"}), patch("backend.retrieval.service.fetch_ukri", side_effect=error), self.assertLogs("backend.retrieval.service", level="WARNING"):
-                self.assertEqual(len(get_items({})), 20)
+                self.assertEqual(len(get_items({})), 60)
 
     def test_cache_failure_does_not_discard_web_results(self):
         with patch.dict(os.environ, {"BRIEFFLOW_RETRIEVAL_MODE": "web"}), patch("backend.retrieval.service.fetch_ukri", return_value=[record()]), patch("backend.retrieval.service.save_items", side_effect=sqlite3.OperationalError("read only")), self.assertLogs("backend.retrieval.service", level="WARNING"):
@@ -255,7 +255,7 @@ class RetrievalTests(unittest.TestCase):
 
     def test_unknown_mode_uses_mock(self):
         with patch.dict(os.environ, {"BRIEFFLOW_RETRIEVAL_MODE": "typo"}), self.assertLogs("backend.retrieval.service", level="WARNING"):
-            self.assertEqual(len(get_items({})), 20)
+            self.assertEqual(len(get_items({})), 60)
 
 
 if __name__ == "__main__":
