@@ -1,52 +1,215 @@
 """Streamlit demo calls the Python Router directly; no FastAPI server required."""
 import os
 import re
-from datetime import date
+from datetime import date, datetime
 from urllib.parse import urlsplit
 
 import streamlit as st
 from backend.router.service import run_brief_flow
 from backend.output_agent.presentation import describe_items, is_high_match, deadline_days
 
-st.set_page_config(page_title="BriefFlow 个人情报站", page_icon="💼", layout="wide")
-st.markdown("""
+st.set_page_config(page_title="BriefFlow 个人情报站", layout="wide")
+
+# 会话状态初始化
+st.session_state.setdefault("history", [])
+st.session_state.setdefault("dark_mode", False)
+
+# 基础样式：所有颜色走 CSS 变量，深浅色切换只需改变量
+_BASE_CSS = """
 <style>
-.block-container {padding-top: 2.2rem; max-width: 1180px;}
-[data-testid="stSidebar"] {background: #f1f5f8;}
-[data-testid="stMetricValue"] {font-size: 1.65rem;}
-[data-testid="stMetricLabel"] {color: #536777;}
-h1, h2, h3 {letter-spacing: -.025em;}
+:root {
+    --bg: #ffffff;
+    --bg-panel: #ffffff;
+    --text: #111827;
+    --muted: #6b7280;
+    --line: #e5e7eb;
+    --border: #111827;
+    --blue: #2563eb;
+    --blue-bg: #eff6ff;
+}
+.stApp, [data-testid="stAppViewContainer"], [data-testid="stHeader"] {
+    background: var(--bg);
+}
+.block-container { padding-top: 2rem; max-width: 1180px; }
+
+[data-testid="stSidebar"] {
+    background: var(--bg);
+    border-right: 1px solid var(--line);
+}
+[data-testid="stSidebar"] p,
+[data-testid="stSidebar"] h1,
+[data-testid="stSidebar"] h2,
+[data-testid="stSidebar"] h3,
+[data-testid="stSidebar"] [data-testid="stCaptionContainer"] p {
+    color: var(--text);
+}
+
+[data-testid="stVerticalBlockBorderWrapper"] {
+    border: 1.5px solid var(--border) !important;
+    border-radius: 14px;
+    background: var(--bg-panel);
+}
+
+[data-testid="stMetric"] {
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 0.5rem 0.85rem;
+    background: var(--bg-panel);
+}
+[data-testid="stMetricValue"] { color: var(--text); font-size: 1.5rem; }
+[data-testid="stMetricLabel"] { color: var(--muted); }
+
+h1, h2, h3,
+[data-testid="stHeading"] h1,
+[data-testid="stHeading"] h2,
+[data-testid="stHeading"] h3 {
+    color: var(--text) !important;
+    letter-spacing: -0.02em;
+}
+.stMarkdown p, label, [data-testid="stCaptionContainer"] p,
+[data-testid="stSpinner"], [data-testid="stWidgetLabel"] { color: var(--text); }
+
+.badge {
+    display: inline-block;
+    border: 1.5px solid var(--border);
+    border-radius: 8px;
+    padding: 0.05rem 0.5rem;
+    font-size: 0.78rem;
+    color: var(--text);
+    white-space: nowrap;
+    line-height: 1.5;
+}
+.badge-blue { border-color: var(--blue); color: var(--blue); }
+.badge-gray { border-color: var(--muted); color: var(--muted); }
+.badge-pill { border-radius: 999px; padding: 0.15rem 0.85rem; font-size: 0.85rem; font-weight: 600; }
+
+button[data-testid="stBaseButton-primary"] {
+    border: 1.5px solid var(--blue) !important;
+    border-radius: 10px !important;
+    background: var(--bg-panel) !important;
+    color: var(--blue) !important;
+    font-weight: 600;
+}
+button[data-testid="stBaseButton-primary"]:hover { background: var(--blue-bg) !important; }
+
+button[data-testid="stBaseButton-secondary"] {
+    border: 1.5px solid var(--border) !important;
+    border-radius: 10px !important;
+    background: var(--bg-panel) !important;
+    color: var(--text) !important;
+    font-weight: 500;
+}
+button[data-testid="stBaseButton-secondary"]:hover { background: var(--blue-bg) !important; }
+
+a[data-testid="stLinkButton"] {
+    border: 1.5px solid var(--border) !important;
+    border-radius: 10px !important;
+    background: var(--bg-panel) !important;
+    color: var(--text) !important;
+    font-weight: 600;
+}
+
+[data-testid="stTextInput"] input {
+    border: 1.5px solid var(--border) !important;
+    border-radius: 10px !important;
+}
+
+[data-testid="stSelectbox"] [data-baseweb="select"] > div {
+    border: 1.5px solid var(--border) !important;
+    border-radius: 10px !important;
+}
+
+[data-testid="stExpander"] details {
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--bg-panel);
+}
+[data-testid="stExpander"] summary { color: var(--text); }
 </style>
-""", unsafe_allow_html=True)
-st.title("🔍 BriefFlow")
+"""
+
+# 深色模式：覆盖变量 + 通知框深色化
+_DARK_CSS = """
+<style>
+:root {
+    --bg: #0f1115;
+    --bg-panel: #16181d;
+    --text: #e5e7eb;
+    --muted: #9ca3af;
+    --line: #2a2e37;
+    --border: #4b5563;
+    --blue: #60a5fa;
+    --blue-bg: #1e2a45;
+}
+/* 覆盖 Streamlit 自带主题变量，让未显式指定的默认文字/背景也跟随深色 */
+.stApp {
+    --text-color: #e5e7eb;
+    --background-color: #0f1115;
+    --secondary-background-color: #16181d;
+    --primary-color: #60a5fa;
+}
+[data-testid="stAlert"] {
+    background-color: #1c2433 !important;
+}
+[data-testid="stAlert"] p, [data-testid="stAlert"] span {
+    color: #e5e7eb !important;
+}
+</style>
+"""
+
+st.markdown(_BASE_CSS, unsafe_allow_html=True)
+
+
+def _badge(label: str, value, kind: str = "default") -> str:
+    """描边小徽标；kind: default / blue / gray，随深浅色主题自动适配。"""
+    cls = {"default": "badge", "blue": "badge badge-blue", "gray": "badge badge-gray"}[kind]
+    return f'<span class="{cls}">{label} {value}</span>'
+
+
+st.title("BriefFlow")
 st.caption("你的个人机会简报 · 理解需求，筛选机会，说明推荐理由")
+
 user_query = st.text_input(
     "请输入你的需求：",
     value="我是金融专业大三学生，想找粤港澳金融实习，不要销售岗。",
 )
-if st.button("🚀 开始检索", type="primary"):
+if st.button("开始检索", type="primary"):
     st.session_state.pop("search_result", None)
     st.session_state.pop("search_error", None)
+    st.session_state.pop("viewing_history", None)
     if not user_query.strip():
         st.session_state.search_error = "请输入检索需求。"
     else:
         try:
             with st.spinner("正在理解需求并筛选机会..."):
-                st.session_state.search_result = run_brief_flow(user_query)
+                fresh_result = run_brief_flow(user_query)
+                st.session_state.search_result = fresh_result
                 st.session_state.retrieval_mode = os.environ.get("BRIEFFLOW_RETRIEVAL_MODE", "mock").strip().lower()
                 st.session_state.searched_query = user_query
+            # 记录历史（回看用，上限 10 条）
+            st.session_state.history.insert(0, {
+                "query": user_query,
+                "time": datetime.now().strftime("%m-%d %H:%M"),
+                "result": fresh_result,
+            })
+            st.session_state.history = st.session_state.history[:10]
         except Exception:
             st.session_state.search_error = "检索失败，未生成结果。请检查后端配置后重试。"
 
 result = st.session_state.get("search_result")
 with st.sidebar:
-    st.header("💼 BriefFlow")
+    st.header("BriefFlow")
     st.subheader("Agent Mode")
     if result:
         enhanced = result.get("summary_mode") == "llm"
         qwen_enhanced = (enhanced and result.get('summary_provider') == 'qwen'
                          and result.get('input_mode') == 'llm' and result.get('input_provider') == 'qwen')
-        st.write("🟢 Qwen Enhanced" if qwen_enhanced else "🟡 Rule-based Fallback" if not enhanced or result.get('input_mode') != 'llm' else "🟢 LLM Enhanced")
+        if enhanced:
+            status_label, status_kind = ("Qwen Enhanced" if qwen_enhanced else "LLM Enhanced"), "blue"
+        else:
+            status_label, status_kind = "Rule-based Fallback", "gray"
+        st.markdown(f'<span class="badge badge-{status_kind} badge-pill">{status_label}</span>',
+                    unsafe_allow_html=True)
         st.caption("AI-generated Brief" if enhanced else "Rule-based Brief")
         st.caption("本次摘要使用 LLM 选择经核实的事实措辞。" if enhanced else
                    "本次摘要由规则生成；未使用 LLM 摘要，或 LLM 调用未通过校验。")
@@ -56,14 +219,45 @@ with st.sidebar:
         st.write("尚未生成 Brief")
         st.caption("检索后显示本次实际摘要模式。")
     st.divider()
+    st.subheader("历史")
+    if st.session_state.get("history"):
+        for i, entry in enumerate(st.session_state.history):
+            label = f"{entry['time']}  {entry['query']}"
+            if len(label) > 26:
+                label = label[:26] + "…"
+            if st.button(label, key=f"hist_{i}"):
+                st.session_state.search_result = entry["result"]
+                st.session_state.searched_query = entry["query"]
+                st.session_state.viewing_history = f"{entry['query']}（{entry['time']}）"
+        if st.button("清空历史", key="clear_history"):
+            st.session_state.history = []
+            st.session_state.pop("viewing_history", None)
+            st.rerun()
+    else:
+        st.caption("暂无历史记录。")
+    st.divider()
+    with st.expander("设置"):
+        st.toggle("深色模式", key="dark_mode")
+    with st.expander("关于"):
+        st.caption("BriefFlow —— 基于 AI Agent 的个性化情报简报服务。")
+        st.caption("自动完成信息获取、筛选、匹配、摘要与持续推送。")
     st.info("修改需求后重新检索，即可生成新的机会简报。")
     st.caption("演示数据会明确标注。申请资格与截止日期请以官方来源为准。")
+
+# 深色模式覆盖（晚于基础样式注入，确保变量生效）
+if st.session_state.get("dark_mode"):
+    st.markdown(_DARK_CSS, unsafe_allow_html=True)
+
+# 历史点击会更新 search_result，重新读取以立即渲染主区域
+result = st.session_state.get("search_result")
 
 if st.session_state.get("search_error"):
     st.error(st.session_state.search_error)
 
 if result is not None:
-    if st.session_state.get("searched_query", user_query) != user_query:
+    if st.session_state.get("viewing_history"):
+        st.info(f"正在查看历史记录：{st.session_state.viewing_history}")
+    elif st.session_state.get("searched_query", user_query) != user_query:
         st.info("当前仍显示上一次检索结果；点击开始检索以更新。")
     items = result.get("recommended_items") or []
     # Recompute all counters from actual items, not optional/model-supplied numbers.
@@ -85,19 +279,19 @@ if result is not None:
         st.warning("实时数据获取失败或无可用数据，本次使用 Demo Mock Data。")
     if source_mode == 'Web Data':
         st.caption("真实来源记录不等于已确认可申请的机会；申请资格及截止日期请以官方来源为准。")
-    st.subheader("🤖 AI Brief")
+    st.subheader("AI Brief")
     st.caption("AI-generated Brief" if result.get("summary_mode") == "llm" else "Rule-based Brief")
     st.info(result.get("summary") or "本次未生成摘要，请查看下方结果。")
     # These highlights are also computed, so legacy/missing optional fields are safe.
-    st.caption(f"✦ {stats['high_match']} 条高匹配机会 · {stats['urgent_deadline']} 条 7 天内截止")
+    st.caption(f"{stats['high_match']} 条高匹配机会 · {stats['urgent_deadline']} 条 7 天内截止")
 
-    st.subheader("🧠 Understood Preference")
+    st.subheader("已理解的偏好")
     st.caption("已理解的筛选偏好 · 仅下列偏好参与筛选；本科资格等申请条件请查看来源核实。")
     preference = result.get("preference") or {}
     left, right = st.columns(2)
     for column, label, field in (
-        (left, "📍 地点", "locations"), (right, "🎯 类型", "categories"),
-        (left, "🔑 偏好", "keywords"), (right, "🚫 排除", "exclude_keywords"),
+        (left, "地点", "locations"), (right, "类型", "categories"),
+        (left, "偏好", "keywords"), (right, "排除", "exclude_keywords"),
     ):
         values = preference.get(field) or []
         if isinstance(values, str):
@@ -121,44 +315,60 @@ if result is not None:
         show_count = st.selectbox("展示数量", [5, 10, 20], index=0)
         st.caption(f"当前展示 {min(show_count, len(items))} / {len(items)} 条 · 保持原始推荐顺序")
         for index, item in enumerate(items[:show_count], 1):
+            title = item.get("title") or "未命名机会"
+            match_score = item.get("match_score", "未提供")
+            priority_score = item.get("priority_score", "未提供")
+            days = deadline_days(item, today)
+            deadline = item.get("deadline") or "未注明"
+            if days is not None and days < 0:
+                ddl_short, ddl_kind = "已截止", "gray"
+            elif days is not None and days <= 7:
+                ddl_short, ddl_kind = ("今天截止" if days == 0 else f"{days}天后截止"), "blue"
+            else:
+                ddl_short, ddl_kind = deadline, "default"
+
+            source_url = item.get("source_url") or item.get("link")
+            link_text, link_url = None, None
+            if isinstance(source_url, str):
+                try:
+                    url = urlsplit(source_url)
+                    if url.scheme in ("http", "https") and url.hostname and not url.username and not url.password:
+                        link_url = source_url
+                        link_text = "示例来源" if "mock" in str(item.get("source", "")).lower() else "原始来源"
+                except ValueError:
+                    pass
+
             with st.container(border=True):
-                col1, col2 = st.columns([3, 1])
-                with col1:
-                    st.subheader(item.get("title") or "未命名机会")
+                # 折叠后仍可见的常驻行：title + 两个分数 + ddl + 链接
+                c1, c2, c3, c4, c5 = st.columns([3.4, 1, 1, 1.5, 0.9])
+                c1.markdown(f"**{title}**")
+                c2.markdown(_badge("匹配", match_score), unsafe_allow_html=True)
+                c3.markdown(_badge("优先", priority_score), unsafe_allow_html=True)
+                c4.markdown(_badge("截止", ddl_short, ddl_kind), unsafe_allow_html=True)
+                if link_url:
+                    c5.link_button(link_text, link_url)
+                else:
+                    c5.caption("—")
+                # 可折叠详情
+                with st.expander("详情", expanded=False):
                     organization = item.get("organization") or item.get("company") or "机构未注明"
                     st.write(organization)
-                    st.caption(f"📍 {item.get('location') or '未注明'} · {item.get('category') or '未分类'}")
-                    days = deadline_days(item, today)
-                    deadline = item.get("deadline") or "未注明"
-                    status = " · 已截止，请核实最新信息" if days is not None and days < 0 else (
-                        " · 今天截止" if days == 0 else f" · {days} 天后截止" if days is not None and days <= 7 else "")
-                    st.write(f"📅 截止：{deadline}{status}")
+                    st.caption(f"{item.get('location') or '未注明'} · {item.get('category') or '未分类'}")
                     if is_high_match(item):
-                        st.caption("✦ 高匹配 · Match Score ≥ 80")
-                with col2:
-                    st.metric("Match Score", item.get("match_score", "未提供"))
-                    st.metric("Priority Score", item.get("priority_score", "未提供"))
-                st.write("**为什么推荐给你**")
-                reasons = item.get("why_recommended") or []
-                if isinstance(reasons, str):
-                    reasons = [reasons]
-                for reason in reasons[:3]:
-                    # Remove only the trailing arithmetic contribution for readable bullets.
-                    st.write("- " + re.sub(r"\+\d+(?:\.\d+)?$", "", str(reason)))
-                if not reasons:
-                    st.caption("暂无详细推荐理由。")
-                if len(reasons) > 3:
-                    with st.expander("更多推荐理由"):
-                        for reason in reasons[3:]:
-                            st.write("- " + str(reason))
-                source = item.get("source") or "未注明"
-                st.caption(f"来源：{source}")
-                source_url = item.get("source_url") or item.get("link")
-                if isinstance(source_url, str):
-                    try:
-                        url = urlsplit(source_url)
-                        if url.scheme in ("http", "https") and url.hostname and not url.username and not url.password:
-                            is_mock = "mock" in str(source).lower()
-                            st.link_button("查看示例来源（Mock）" if is_mock else "查看原始来源", source_url)
-                    except ValueError:
-                        pass
+                        st.caption("高匹配 · Match Score ≥ 80")
+                    st.write("**为什么推荐给你**")
+                    reasons = item.get("why_recommended") or []
+                    if isinstance(reasons, str):
+                        reasons = [reasons]
+                    for reason in reasons[:3]:
+                        # Remove only the trailing arithmetic contribution for readable bullets.
+                        st.write("- " + re.sub(r"\+\d+(?:\.\d+)?$", "", str(reason)))
+                    if not reasons:
+                        st.caption("暂无详细推荐理由。")
+                    if len(reasons) > 3:
+                        with st.expander("更多推荐理由"):
+                            for reason in reasons[3:]:
+                                st.write("- " + str(reason))
+                    source = item.get("source") or "未注明"
+                    st.caption(f"来源：{source}")
+                    st.caption(f"截止日期：{deadline}")
