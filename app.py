@@ -7,12 +7,16 @@ from urllib.parse import urlsplit
 import streamlit as st
 from backend.router.service import run_brief_flow
 from backend.output_agent.presentation import describe_items, is_high_match, deadline_days
+from backend.tiers import TIERS, DIM_LABELS
 
 st.set_page_config(page_title="BriefFlow 个人情报站", layout="wide")
 
 # 会话状态初始化
 st.session_state.setdefault("history", [])
 st.session_state.setdefault("dark_mode", False)
+st.session_state.setdefault("tier", "free")
+st.session_state.setdefault("upgrade_prompted", False)
+st.session_state.setdefault("show_upgrade", False)
 
 # 基础样式：所有颜色走 CSS 变量，深浅色切换只需改变量
 _BASE_CSS = """
@@ -131,6 +135,19 @@ a[data-testid="stLinkButton"] {
     background: var(--bg-panel);
 }
 [data-testid="stExpander"] summary { color: var(--text); }
+
+/* 侧边栏付费按钮：金框金字 */
+[data-testid="stSidebar"] button[data-testid="stBaseButton-primary"] {
+    border: 2px solid #d4af37 !important;
+    background: transparent !important;
+    color: #b8860b !important;
+    font-weight: 700;
+}
+[data-testid="stSidebar"] button[data-testid="stBaseButton-primary"]:hover {
+    background: #fbf5e3 !important;
+}
+/* 金色徽标 */
+.badge-gold { border-color: #d4af37 !important; color: #b8860b !important; }
 </style>
 """
 
@@ -173,6 +190,52 @@ def _badge(label: str, value, kind: str = "default") -> str:
     """描边小徽标；kind: default / blue / gray，随深浅色主题自动适配。"""
     cls = {"default": "badge", "blue": "badge badge-blue", "gray": "badge badge-gray"}[kind]
     return f'<span class="{cls}">{label} {value}</span>'
+
+
+_PLAN_FEATURES = {
+    "free": ["按「类型」单维度匹配", "最多 5 条结果", "最近 5 条历史"],
+    "plus": ["类型 + 地点 + 专业 + 年级", "最多 20 条结果", "最近 50 条历史"],
+    "pro": ["全部维度匹配", "不限结果条数", "不限历史 + LLM 增强摘要"],
+}
+
+
+@st.dialog("升级 BriefFlow 会员", width="large")
+def show_upgrade_dialog():
+    """付费方案弹窗：三方案并列，划价写零（demo），预留真实支付接口。"""
+    current = st.session_state.get("tier", "free")
+    st.caption("比赛演示：价格已划掉、当前全部免费解锁；界面预留真实支付接口。")
+    cols = st.columns(3)
+    for col, key in zip(cols, ("free", "plus", "pro")):
+        name = TIERS[key]["name"]
+        price = TIERS[key]["price"]
+        features = _PLAN_FEATURES[key]
+        highlighted = key == "pro"
+        border = "2px solid #d4af37" if highlighted else "1.5px solid var(--border)"
+        title_color = "#b8860b" if highlighted else "var(--text)"
+        if price == 0:
+            price_html = '<span style="font-weight:800;font-size:1.5rem;">¥0</span>'
+        else:
+            price_html = (
+                f'<s style="color:var(--muted);">¥{price}/月</s> '
+                '<span style="font-weight:800;font-size:1.5rem;">¥0</span>'
+            )
+        with col:
+            st.markdown(
+                f'<div style="border:{border};border-radius:12px;padding:1rem;min-height:250px;background:var(--bg-panel);">'
+                f'<div style="font-weight:800;font-size:1.25rem;color:{title_color};">{name}</div>'
+                f'<div style="margin:0.6rem 0 0.8rem;">{price_html}</div>'
+                + "".join(
+                    f'<div style="font-size:0.88rem;color:var(--text);margin:0.35rem 0;">· {f}</div>'
+                    for f in features
+                )
+                + "</div>",
+                unsafe_allow_html=True,
+            )
+            if key == current:
+                st.button("当前方案", key=f"cur_{key}", disabled=True, use_container_width=True)
+            elif st.button("立即解锁", key=f"buy_{key}", type="primary", use_container_width=True):
+                st.session_state.tier = key
+                st.rerun()
 
 
 # 初始态 hero 标题与样式
@@ -224,7 +287,7 @@ if st.button("开始检索", type="primary"):
     else:
         try:
             with st.spinner("正在理解需求并筛选机会..."):
-                fresh_result = run_brief_flow(user_query)
+                fresh_result = run_brief_flow(user_query, tier=st.session_state.get("tier", "free"))
                 st.session_state.search_result = fresh_result
                 st.session_state.retrieval_mode = os.environ.get("BRIEFFLOW_RETRIEVAL_MODE", "mock").strip().lower()
                 st.session_state.searched_query = user_query
@@ -238,12 +301,29 @@ if st.button("开始检索", type="primary"):
         except Exception:
             st.session_state.search_error = "检索失败，未生成结果。请检查后端配置后重试。"
         else:
+            # free 首次检索后自动弹一次付费提示；之后收纳在侧栏，点按钮才弹
+            if st.session_state.get("tier", "free") == "free" and not st.session_state.get("upgrade_prompted"):
+                st.session_state.upgrade_prompted = True
+                st.session_state.show_upgrade = True
             # 检索成功后重跑，让标题从 hero 切换为常规布局
             st.rerun()
+
+# 首次 free 检索后自动弹出付费弹窗（仅一次）
+if st.session_state.get("show_upgrade"):
+    st.session_state.show_upgrade = False
+    show_upgrade_dialog()
 
 result = st.session_state.get("search_result")
 with st.sidebar:
     st.header("BriefFlow")
+    # 付费选项按钮（金框金字）+ 当前方案徽标
+    if st.button("付费选项", key="pricing_btn", type="primary"):
+        show_upgrade_dialog()
+    tier_name = TIERS[st.session_state.get("tier", "free")]["name"]
+    st.markdown(
+        f'<span class="badge badge-gold badge-pill">当前方案：{tier_name}</span>',
+        unsafe_allow_html=True,
+    )
     st.subheader("Agent Mode")
     if result:
         enhanced = result.get("summary_mode") == "llm"
@@ -332,6 +412,12 @@ if result is not None:
 
     st.subheader("已理解的偏好")
     st.caption("已理解的筛选偏好 · 仅下列偏好参与筛选；本科资格等申请条件请查看来源核实。")
+    # tier 门控提示：免费版被截断的维度
+    gated = result.get("gated") or {}
+    dropped_dims = gated.get("dropped_dims") or []
+    if dropped_dims:
+        dropped_names = "、".join(DIM_LABELS.get(f, f) for f in dropped_dims)
+        st.info(f"当前为 {TIERS[result.get('tier', 'free')]['name']} 方案，已忽略维度：{dropped_names}。升级会员解锁更多匹配维度。")
     preference = result.get("preference") or {}
     left, right = st.columns(2)
     for column, label, field in (

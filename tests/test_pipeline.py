@@ -92,7 +92,7 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(set(result), {
             "preference", "total_items", "recommended_items", "summary",
             "summary_mode", "summary_provider", "highlights", "result_stats",
-            "input_mode", "input_provider", "retrieval",
+            "input_mode", "input_provider", "retrieval", "tier", "gated",
         })
         self.assertIsInstance(result["summary"], str)
         self.assertEqual(json.loads(json.dumps(result, ensure_ascii=False)), result)
