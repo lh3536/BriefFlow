@@ -24,7 +24,9 @@ def record(**changes):
     return {
         "title": "Research funding", "organization": "Example Institute",
         "source": "Test Fixture", "source_url": "https://example.com/opportunity/1",
-        "location": "未注明", "category": "科研机会", "summary": "Test only",
+        "location": "未注明", "category": "科研", "module": "research",
+        "summary": "Test only", "disciplines": ["通用"], "grades": ["大三"],
+        "time_pref": "长期",
         "published_at": "2026-10-01", "deadline": "", "tags": ["research"],
         "requirements": [], "last_updated": "2026-10-03T00:00:00+00:00", **changes,
     }
@@ -46,8 +48,8 @@ class RetrievalTests(unittest.TestCase):
         with patch("backend.retrieval.service.fetch_ukri") as fetch:
             items = get_items({})
         fetch.assert_not_called()
-        self.assertEqual(len(items), 15)
-        self.assertEqual(items[0]["job_id"], "job_001")
+        self.assertEqual(len(items), 20)
+        self.assertEqual(items[0]["job_id"], "job_101")
         self.assertEqual(items[0]["source"], "BriefFlow Mock")
         self.assertEqual(MOCK_PATH.read_bytes(), before)
         self.assertFalse(self.db.exists())
@@ -103,6 +105,30 @@ class RetrievalTests(unittest.TestCase):
         self.assertNotIn("match_score", columns)
         self.assertNotIn("why_recommended", columns)
 
+    def test_sqlite_round_trip_preserves_new_contract_fields(self):
+        item = normalize_item(record())
+        self.assertEqual(save_items([item], self.db), 1)
+        stored = load_items(self.db)[0]
+        for key in ("module", "disciplines", "grades", "time_pref"):
+            self.assertEqual(stored[key], item[key])
+
+    def test_legacy_database_adds_new_contract_columns(self):
+        with closing(sqlite3.connect(self.db)) as connection, connection:
+            connection.execute("""
+                CREATE TABLE items (
+                    item_id TEXT PRIMARY KEY, title TEXT NOT NULL, organization TEXT NOT NULL,
+                    location TEXT NOT NULL, category TEXT NOT NULL, summary TEXT NOT NULL,
+                    source TEXT NOT NULL, source_url TEXT NOT NULL UNIQUE,
+                    published_at TEXT NOT NULL, deadline TEXT NOT NULL,
+                    tags TEXT NOT NULL, requirements TEXT NOT NULL, last_updated TEXT NOT NULL,
+                    content_key TEXT NOT NULL UNIQUE
+                )
+            """)
+        self.assertEqual(save_items([record()], self.db), 1)
+        with closing(sqlite3.connect(self.db)) as connection:
+            columns = {row[1] for row in connection.execute("PRAGMA table_info(items)")}
+        self.assertTrue({"module", "disciplines", "grades", "time_pref"} <= columns)
+
     def test_sqlite_upsert_and_cross_batch_deduplication(self):
         save_items([record()], self.db)
         self.assertEqual(save_items([record(summary="Updated")], self.db), 1)
@@ -131,13 +157,13 @@ class RetrievalTests(unittest.TestCase):
 
     def test_empty_database_falls_back_to_mock(self):
         with patch.dict(os.environ, {"BRIEFFLOW_RETRIEVAL_MODE": "database"}), self.assertLogs("backend.retrieval.service", level="WARNING") as logs:
-            self.assertEqual(len(get_items({})), 15)
+            self.assertEqual(len(get_items({})), 20)
         self.assertTrue(any("fallback=mock" in message for message in logs.output))
 
     def test_corrupt_database_falls_back(self):
         self.db.write_bytes(b"not a database")
         with patch.dict(os.environ, {"BRIEFFLOW_RETRIEVAL_MODE": "database"}), self.assertLogs("backend.retrieval.service", level="WARNING"):
-            self.assertEqual(len(get_items({})), 15)
+            self.assertEqual(len(get_items({})), 20)
 
     def test_corrupt_row_skipped_and_counted(self):
         save_items([record(), record(title="Other", source_url="https://example.com/2")], self.db)
@@ -189,7 +215,12 @@ class RetrievalTests(unittest.TestCase):
 
     def test_network_failure_falls_back_and_pipeline_runs(self):
         with patch.dict(os.environ, {"BRIEFFLOW_RETRIEVAL_MODE": "web"}), patch("backend.retrieval.service.fetch_ukri", side_effect=URLError("offline")), self.assertLogs("backend.retrieval.service", level="INFO") as logs:
-            result = run_brief_flow("广州金融实习，不要销售岗")
+            with patch("backend.router.service.parse_user_request", return_value={
+                "categories": ["实习"], "locations": ["广州"],
+                "disciplines": [], "grades": [], "time_prefs": [],
+                "keywords": ["金融"], "exclude_keywords": ["销售"],
+            }):
+                result = run_brief_flow("广州金融实习，不要销售岗")
         self.assertGreater(result["total_items"], 0)
         self.assertTrue(all(item["source"] == "BriefFlow Mock" for item in result["recommended_items"]))
         self.assertTrue(any("fallback=mock" in message for message in logs.output))
@@ -197,13 +228,13 @@ class RetrievalTests(unittest.TestCase):
 
     def test_empty_web_falls_back(self):
         with patch.dict(os.environ, {"BRIEFFLOW_RETRIEVAL_MODE": "web"}), patch("backend.retrieval.service.fetch_ukri", return_value=[]), self.assertLogs("backend.retrieval.service", level="WARNING"):
-            self.assertEqual(len(get_items({})), 15)
+            self.assertEqual(len(get_items({})), 20)
 
     def test_incomplete_response_and_invalid_xml_fall_back(self):
         import xml.etree.ElementTree as ET
         for error in (IncompleteRead(b"partial"), ET.ParseError("invalid XML")):
             with self.subTest(error=type(error).__name__), patch.dict(os.environ, {"BRIEFFLOW_RETRIEVAL_MODE": "web"}), patch("backend.retrieval.service.fetch_ukri", side_effect=error), self.assertLogs("backend.retrieval.service", level="WARNING"):
-                self.assertEqual(len(get_items({})), 15)
+                self.assertEqual(len(get_items({})), 20)
 
     def test_cache_failure_does_not_discard_web_results(self):
         with patch.dict(os.environ, {"BRIEFFLOW_RETRIEVAL_MODE": "web"}), patch("backend.retrieval.service.fetch_ukri", return_value=[record()]), patch("backend.retrieval.service.save_items", side_effect=sqlite3.OperationalError("read only")), self.assertLogs("backend.retrieval.service", level="WARNING"):
@@ -224,7 +255,7 @@ class RetrievalTests(unittest.TestCase):
 
     def test_unknown_mode_uses_mock(self):
         with patch.dict(os.environ, {"BRIEFFLOW_RETRIEVAL_MODE": "typo"}), self.assertLogs("backend.retrieval.service", level="WARNING"):
-            self.assertEqual(len(get_items({})), 15)
+            self.assertEqual(len(get_items({})), 20)
 
 
 if __name__ == "__main__":
