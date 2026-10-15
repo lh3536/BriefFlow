@@ -14,12 +14,12 @@ from backend.ranking.service import rank_items
 
 APP = str(Path(__file__).resolve().parents[1] / 'app.py')
 TODAY = date(2026, 10, 12)
-PREF = {'locations': ['深圳'], 'categories': ['金融实习'], 'keywords': ['投行'], 'exclude_keywords': ['销售']}
+PREF = {'locations': ['深圳'], 'categories': ['实习'], 'keywords': ['投行'], 'exclude_keywords': ['销售']}
 
 
 def item(**changes):
     return {'job_id': 'a', 'title': '深圳投行实习', 'location': '深圳',
-            'category': '金融实习', 'organization': '测试机构', 'source': 'BriefFlow Mock',
+            'category': '实习', 'organization': '测试机构', 'source': 'BriefFlow Mock',
             'deadline': '2026-10-15', 'match_score': 90, 'priority_score': 85,
             'why_recommended': ['地点匹配（深圳）+40'], **changes}
 

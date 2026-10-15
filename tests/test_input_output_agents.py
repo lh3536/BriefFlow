@@ -18,7 +18,7 @@ class InputAgentTests(unittest.TestCase):
     def test_finance_request(self):
         result = parse_user_request("我是金融专业大三学生，想找广州深圳香港澳门的金融实习，不要销售岗。")
         self.assertEqual(result, {
-            "categories": ["金融实习"],
+            "categories": ["实习"],
             "locations": ["广州", "深圳", "香港", "澳门"],
             "keywords": ["金融"], "exclude_keywords": ["销售"],
         })
@@ -47,7 +47,7 @@ class InputAgentTests(unittest.TestCase):
         for separator in (",", ";", ".", "!", "?", "，", "；", "。", "！", "？", "\n", "\r\n", "．"):
             with self.subTest(separator=separator):
                 result = parse_user_request(f"不要销售岗{separator}广州金融实习")
-                self.assertEqual(result["categories"], ["金融实习"])
+                self.assertEqual(result["categories"], ["实习"])
                 self.assertEqual(result["locations"], ["广州"])
                 self.assertEqual(result["exclude_keywords"], ["销售"])
 
@@ -56,12 +56,12 @@ class InputAgentTests(unittest.TestCase):
             with self.subTest(resume=resume):
                 result = parse_user_request(f"不要销售岗{resume}深圳金融实习")
                 self.assertEqual(result["locations"], ["深圳"])
-                self.assertEqual(result["categories"], ["金融实习"])
+                self.assertEqual(result["categories"], ["实习"])
                 self.assertEqual(result["exclude_keywords"], ["销售"])
 
     def test_multiple_exclusions_without_false_positive_preference(self):
         result = parse_user_request("不要金融销售，也不考虑客服和保险，想找科研机会")
-        self.assertEqual(result["categories"], ["科研机会"])
+        self.assertEqual(result["categories"], ["科研"])
         self.assertEqual(result["keywords"], [])
         self.assertEqual(result["exclude_keywords"], ["销售", "客服", "保险"])
         self.assertEqual(parse_user_request("销售实习")["exclude_keywords"], [])

@@ -40,7 +40,7 @@ class TiaozhanbeiTest(unittest.TestCase):
         )
         items = parse_tiaozhanbei(html)
         self.assertEqual(len(items), 2)
-        self.assertEqual(items[0]["category"], "经管比赛")
+        self.assertEqual(items[0]["category"], "竞赛")
         self.assertEqual(items[0]["source_url"], "https://www.tiaozhanbei.net/article/15842/")
         self.assertEqual(items[0]["organization"], "挑战杯官网")
 
@@ -88,7 +88,7 @@ class CffexTest(unittest.TestCase):
         items = parse_cffex(html)
         self.assertEqual(len(items), 1)
         self.assertEqual(items[0]["published_at"], "2026-08-07")
-        self.assertEqual(items[0]["category"], "经管比赛")
+        self.assertEqual(items[0]["category"], "竞赛")
         self.assertEqual(items[0]["source_url"], "http://www.cffex.com.cn/cn/jysdt/20260807/48440.html")
 
     def test_detail_enrichment_extracts_registration_deadline(self):

@@ -14,7 +14,7 @@ from backend.output_agent.service import build_brief
 from backend.router.service import run_brief_flow
 
 RULE_RESULT = {
-    "categories": ["金融实习"],
+    "categories": ["实习"],
     "locations": ["广州"],
     "keywords": ["金融"],
     "exclude_keywords": ["销售"],
@@ -33,13 +33,13 @@ class InputAgentLLMTests(unittest.TestCase):
 
     def test_llm_merges_with_rules(self):
         llm_json = json.dumps({
-            "categories": ["金融实习"], "locations": ["广州"],
+            "categories": ["实习"], "locations": ["广州"],
             "keywords": ["行研"], "exclude_keywords": [],
         }, ensure_ascii=False)
         with patch("backend.input_agent.llm.llm_available", return_value=True), \
              patch("backend.input_agent.llm.chat_completion", return_value=llm_json) as chat:
             result = parse_user_request(DEMO_TEXT)
-        self.assertEqual(result["categories"], ["金融实习"])
+        self.assertEqual(result["categories"], ["实习"])
         self.assertEqual(result["locations"], ["广州"])
         self.assertEqual(result["keywords"], ["金融", "行研"])  # 规则在前，LLM 补充
         self.assertEqual(result["exclude_keywords"], ["销售"])  # 规则识别不被 LLM 弄丢
@@ -59,7 +59,7 @@ class InputAgentLLMTests(unittest.TestCase):
 
     def test_llm_unknown_values_filtered(self):
         llm_json = json.dumps({
-            "categories": ["游戏公司", "金融实习"],
+            "categories": ["游戏公司", "实习"],
             "locations": ["北京", "深圳"],
             "keywords": ["金融", 123, None, "超长的关键词" * 10],
             "exclude_keywords": ["销售"],
@@ -68,7 +68,7 @@ class InputAgentLLMTests(unittest.TestCase):
         with patch("backend.input_agent.llm.llm_available", return_value=True), \
              patch("backend.input_agent.llm.chat_completion", return_value=llm_json):
             result = parse_user_request("深圳有什么机会")
-        self.assertEqual(result["categories"], ["金融实习"])  # 游戏公司被过滤
+        self.assertEqual(result["categories"], ["实习"])  # 游戏公司被过滤
         self.assertEqual(result["locations"], ["深圳"])        # 北京被过滤
         self.assertEqual(result["keywords"], ["金融"])         # 非字符串/超长被过滤
         self.assertEqual(set(result), {"categories", "locations", "keywords", "exclude_keywords"})
@@ -108,10 +108,10 @@ class InputAgentLLMTests(unittest.TestCase):
 
 class InputAgentLLMHelperTests(unittest.TestCase):
     def test_validate_preference_drops_unknown_and_coerces(self):
-        data = {"categories": ["金融实习", "未知类别"], "locations": "广州",
+        data = {"categories": ["实习", "未知类别"], "locations": "广州",
                 "keywords": ["量化"], "exclude_keywords": []}
         result = validate_preference(data)
-        self.assertEqual(result["categories"], ["金融实习"])
+        self.assertEqual(result["categories"], ["实习"])
         self.assertEqual(result["locations"], [])  # 非列表字段按空处理
         self.assertEqual(result["keywords"], ["量化"])
 
