@@ -45,7 +45,7 @@ class RetrievalTests(unittest.TestCase):
 
     def test_mock_still_reads_without_network_or_database(self):
         before = MOCK_PATH.read_bytes()
-        with patch("backend.retrieval.service.fetch_ukri") as fetch:
+        with patch("backend.retrieval.service.fetch_web") as fetch:
             items = get_items({})
         fetch.assert_not_called()
         self.assertEqual(len(items), 60)
@@ -207,14 +207,14 @@ class RetrievalTests(unittest.TestCase):
         response.read.assert_called_once_with(MAX_BYTES + 1)
 
     def test_web_mode_caches_valid_items(self):
-        with patch.dict(os.environ, {"BRIEFFLOW_RETRIEVAL_MODE": "web"}), patch("backend.retrieval.service.fetch_ukri", return_value=parse_ukri_feed(FIXTURE.read_bytes())):
+        with patch.dict(os.environ, {"BRIEFFLOW_RETRIEVAL_MODE": "web"}), patch("backend.retrieval.service.fetch_web", return_value=parse_ukri_feed(FIXTURE.read_bytes())):
             items = get_items({})
         self.assertEqual(len(items), 2)
         self.assertEqual(len(load_items(self.db)), 2)
         self.assertTrue(all(item["source"] == UKRI_SOURCE for item in items))
 
     def test_network_failure_falls_back_and_pipeline_runs(self):
-        with patch.dict(os.environ, {"BRIEFFLOW_RETRIEVAL_MODE": "web"}), patch("backend.retrieval.service.fetch_ukri", side_effect=URLError("offline")), self.assertLogs("backend.retrieval.service", level="INFO") as logs:
+        with patch.dict(os.environ, {"BRIEFFLOW_RETRIEVAL_MODE": "web"}), patch("backend.retrieval.service.fetch_web", side_effect=URLError("offline")), self.assertLogs("backend.retrieval.service", level="INFO") as logs:
             with patch("backend.router.service.parse_user_request", return_value={
                 "categories": ["实习"], "locations": ["广州"],
                 "disciplines": [], "grades": [], "time_prefs": [],
@@ -227,22 +227,22 @@ class RetrievalTests(unittest.TestCase):
         self.assertFalse(self.db.exists())
 
     def test_empty_web_falls_back(self):
-        with patch.dict(os.environ, {"BRIEFFLOW_RETRIEVAL_MODE": "web"}), patch("backend.retrieval.service.fetch_ukri", return_value=[]), self.assertLogs("backend.retrieval.service", level="WARNING"):
+        with patch.dict(os.environ, {"BRIEFFLOW_RETRIEVAL_MODE": "web"}), patch("backend.retrieval.service.fetch_web", return_value=[]), self.assertLogs("backend.retrieval.service", level="WARNING"):
             self.assertEqual(len(get_items({})), 60)
 
     def test_incomplete_response_and_invalid_xml_fall_back(self):
         import xml.etree.ElementTree as ET
         for error in (IncompleteRead(b"partial"), ET.ParseError("invalid XML")):
-            with self.subTest(error=type(error).__name__), patch.dict(os.environ, {"BRIEFFLOW_RETRIEVAL_MODE": "web"}), patch("backend.retrieval.service.fetch_ukri", side_effect=error), self.assertLogs("backend.retrieval.service", level="WARNING"):
+            with self.subTest(error=type(error).__name__), patch.dict(os.environ, {"BRIEFFLOW_RETRIEVAL_MODE": "web"}), patch("backend.retrieval.service.fetch_web", side_effect=error), self.assertLogs("backend.retrieval.service", level="WARNING"):
                 self.assertEqual(len(get_items({})), 60)
 
     def test_cache_failure_does_not_discard_web_results(self):
-        with patch.dict(os.environ, {"BRIEFFLOW_RETRIEVAL_MODE": "web"}), patch("backend.retrieval.service.fetch_ukri", return_value=[record()]), patch("backend.retrieval.service.save_items", side_effect=sqlite3.OperationalError("read only")), self.assertLogs("backend.retrieval.service", level="WARNING"):
+        with patch.dict(os.environ, {"BRIEFFLOW_RETRIEVAL_MODE": "web"}), patch("backend.retrieval.service.fetch_web", return_value=[record()]), patch("backend.retrieval.service.save_items", side_effect=sqlite3.OperationalError("read only")), self.assertLogs("backend.retrieval.service", level="WARNING"):
             self.assertEqual(get_items({})[0]["source"], "Test Fixture")
 
     def test_metrics_counts_and_duration(self):
         raw = [record(), record(), record(title="")]
-        with patch.dict(os.environ, {"BRIEFFLOW_RETRIEVAL_MODE": "web"}), patch("backend.retrieval.service.fetch_ukri", return_value=raw), self.assertLogs("backend.retrieval.service", level="INFO") as logs:
+        with patch.dict(os.environ, {"BRIEFFLOW_RETRIEVAL_MODE": "web"}), patch("backend.retrieval.service.fetch_web", return_value=raw), self.assertLogs("backend.retrieval.service", level="INFO") as logs:
             self.assertEqual(len(get_items({})), 1)
         metrics = json.loads(next(line.split("retrieval ", 1)[1] for line in logs.output if "retrieval {" in line))
         self.assertEqual((metrics["items_fetched"], metrics["items_accepted"], metrics["items_rejected"], metrics["duplicates_removed"]), (3, 1, 1, 1))
