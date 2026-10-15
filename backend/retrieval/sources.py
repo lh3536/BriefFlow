@@ -153,7 +153,7 @@ def parse_ukri_feed(payload: bytes) -> list[dict]:
                 published = raw_date
         items.append({
             "title": entry.findtext("title", ""), "organization": UKRI_SOURCE,
-            "location": "未注明", "category": "科研机会",
+            "location": "未注明", "category": "科研",
             "summary": " ".join(" ".join(parser.parts).split()),
             "source": UKRI_SOURCE, "source_url": entry.findtext("link", ""),
             "published_at": published, "deadline": "", "tags": ["科研资助", "UKRI"],
@@ -180,7 +180,7 @@ def parse_tiaozhanbei(html: str) -> list[dict]:
             continue
         items.append({
             "title": title, "organization": TIAOZHANBEI_SOURCE, "location": "未注明",
-            "category": "经管比赛", "summary": title, "source": TIAOZHANBEI_SOURCE,
+            "category": "竞赛", "summary": title, "source": TIAOZHANBEI_SOURCE,
             "source_url": "https://www.tiaozhanbei.net" + path,
             "published_at": "", "deadline": "", "tags": ["竞赛", "挑战杯"], "requirements": [],
         })
@@ -207,7 +207,7 @@ def parse_cffex(html: str) -> list[dict]:
             continue
         items.append({
             "title": title, "organization": CFFEX_SOURCE, "location": "未注明",
-            "category": "经管比赛", "summary": title, "source": CFFEX_SOURCE,
+            "category": "竞赛", "summary": title, "source": CFFEX_SOURCE,
             "source_url": "http://www.cffex.com.cn" + path,
             "published_at": date_str, "deadline": "", "tags": ["竞赛", "金融"], "requirements": [],
         })

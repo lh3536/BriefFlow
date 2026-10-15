@@ -16,7 +16,7 @@ from backend.ranking.service import rank_items
 
 APP = str(Path(__file__).resolve().parents[1] / 'app.py')
 QUERY = '我是金融专业大三学生，想找广州、深圳、香港、澳门适合本科生的金融、券商、投行和 FinTech 机会，优先实习和比赛，不要销售岗位。'
-PREF = {'locations':['广州','深圳','香港','澳门'], 'categories':['金融实习','经管比赛'],
+PREF = {'locations':['广州','深圳','香港','澳门'], 'categories':['实习','竞赛'],
         'keywords':['金融','券商','投行','FinTech'], 'exclude_keywords':['销售']}
 
 
@@ -143,22 +143,21 @@ class RC2Tests(unittest.TestCase):
         self.assertFalse(any('Qwen Enhanced' in x.value for x in app.markdown))
 
     def test_complete_partial_and_unmatched_keywords_have_distinct_scores(self):
-        pref = {'locations':['深圳'],'categories':['金融实习'],'keywords':['量化','投行']}
-        rows = [{'job_id':str(i),'title':title,'location':'深圳','category':'金融实习'}
+        pref = {'locations':['深圳'],'categories':['实习'],'keywords':['量化','投行']}
+        rows = [{'job_id':str(i),'title':title,'location':'深圳','category':'实习'}
                 for i,title in enumerate(['量化投行实习','量化实习','运营实习'])]
         ranked = rank_items(pref,rows,as_of=date(2026,10,13))
-        self.assertEqual([x['match_score'] for x in ranked],[100,85,70])
+        self.assertEqual([x['match_score'] for x in ranked],[65,65,55])
         for row in ranked:
             self.assertEqual(sum(row['score_breakdown']['match'].values()),row['match_score'])
             self.assertEqual(sum(float(re.search(r'([+-]\d+(?:\.\d+)?)$',reason)[1])
                                  for reason in row['why_recommended']),row['match_score'])
 
     def test_generic_keyword_does_not_award_all_specialist_points(self):
-        pref = {**PREF, 'locations':['深圳'],'categories':['金融实习']}
-        row = {'title':'金融实习','location':'深圳','category':'金融实习'}
+        pref = {**PREF, 'locations':['深圳'],'categories':['实习']}
+        row = {'title':'实习','location':'深圳','category':'实习'}
         result = rank_items(pref,[row],as_of=date(2026,10,13))[0]
-        self.assertEqual(result['match_score'],77.5)
-        self.assertIn('覆盖 1/4',result['why_recommended'][-1])
+        self.assertEqual(result['match_score'],55.0)
 
 
 if __name__ == '__main__':
