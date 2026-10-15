@@ -58,7 +58,7 @@ class RankingTests(unittest.TestCase):
         self.assertEqual([row["match_score"] for row in scores], [100, 90])
 
     def test_location_and_category_remain_hard_filters(self):
-        self.assertEqual(rank(preference(), [item(location="广州"), item(category="科研机会")]), [])
+        self.assertEqual(rank(preference(), [item(location="广州"), item(category="科研")]), [])
 
     def test_sales_exclusions_and_aliases_are_hard_filters(self):
         for term in ("销售", "保险代理", "电话营销", "地推", "客服销售"):

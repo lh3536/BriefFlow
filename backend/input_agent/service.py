@@ -53,10 +53,12 @@ def _rule_parse(text: str) -> dict[str, list[str]]:
     positive_text = _EXCLUSION.sub(" ", text)
     categories = [
         category for category, aliases in (
-            ("金融实习", ("金融实习", "实习")),
-            ("经管比赛", ("经管比赛", "比赛")),
+            ("实习", ("金融实习", "实习")),
+            ("竞赛", ("经管比赛", "竞赛", "比赛")),
             ("夏令营", ("夏令营",)),
-            ("科研机会", ("科研", "研究助理")),
+            ("科研", ("科研机会", "科研", "研究助理")),
+            ("奖学金", ("奖学金",)),
+            ("暑校", ("暑校", "暑期学校")),
         ) if any(alias in positive_text for alias in aliases)
     ]
     locations = [

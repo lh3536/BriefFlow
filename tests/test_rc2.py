@@ -117,7 +117,7 @@ class RC2Tests(unittest.TestCase):
         self.assertEqual(app.session_state['search_result']['input_mode'],'rule')
 
     def test_live_records_filtered_to_zero_keep_web_provenance(self):
-        record = {'title':'官方科研记录','location':'未注明','category':'科研机会','source':'UKRI'}
+        record = {'title':'官方科研记录','location':'未注明','category':'科研','source':'UKRI'}
         with patch.dict(os.environ, {'BRIEFFLOW_RETRIEVAL_MODE':'web'}), patch(
                 'backend.router.service.get_items',return_value=[record]):
             app = self.app()

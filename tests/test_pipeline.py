@@ -34,7 +34,7 @@ class PipelineTests(unittest.TestCase):
 
     def test_mock_data_read(self):
         items = get_items(PREFERENCE)
-        self.assertEqual(len(items), 20)
+        self.assertEqual(len(items), 60)
         self.assertEqual(items[0]["job_id"], "job_101")
         self.assertTrue({
             "job_id", "title", "company", "location", "category", "deadline",
@@ -84,21 +84,26 @@ class PipelineTests(unittest.TestCase):
         # 依赖 A0 输出新 category，A0 未改前会挂
         result = run_brief_flow(REQUEST)
         self.assertEqual(result["preference"], PREFERENCE)
-        self.assertEqual(result["total_items"], 20)
-        self.assertEqual(result["recommended_items"][0]["job_id"], "job_101")
+        self.assertEqual(result["total_items"], 4)
+        self.assertEqual(result["recommended_items"][0]["job_id"], "job_103")
 
     def test_json_output_contract(self):
         result = run_brief_flow(REQUEST)
-        self.assertEqual(set(result), {"preference", "total_items", "recommended_items", "summary"})
+        self.assertEqual(set(result), {
+            "preference", "total_items", "recommended_items", "summary",
+            "summary_mode", "summary_provider", "highlights", "result_stats",
+            "input_mode", "input_provider", "retrieval",
+        })
         self.assertIsInstance(result["summary"], str)
         self.assertEqual(json.loads(json.dumps(result, ensure_ascii=False)), result)
         self.assertTrue(all(isinstance(values, list) for values in result["preference"].values()))
 
     def test_empty_output(self):
-        self.assertEqual(build_brief(PREFERENCE, []), {
-            "preference": PREFERENCE, "total_items": 0, "recommended_items": [],
-            "summary": "根据你的需求，本次未找到匹配信息，可尝试补充或调整需求。",
-        })
+        empty = build_brief(PREFERENCE, [])
+        self.assertEqual(empty["preference"], PREFERENCE)
+        self.assertEqual(empty["total_items"], 0)
+        self.assertEqual(empty["recommended_items"], [])
+        self.assertIn("未找到匹配信息", empty["summary"])
         self.assertEqual(run_brief_flow("未识别的需求")["recommended_items"], [])
 
 

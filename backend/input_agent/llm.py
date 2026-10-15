@@ -15,7 +15,7 @@ from backend.llm import chat_completion, llm_available
 
 # Downstream (Kami's retrieval, Flin's ranking) only understands these values;
 # anything else the LLM invents is dropped instead of breaking hard filters.
-_ALLOWED_CATEGORIES = ("金融实习", "经管比赛", "夏令营", "科研机会")
+_ALLOWED_CATEGORIES = ("实习", "竞赛", "夏令营", "科研", "奖学金", "暑校")
 _ALLOWED_LOCATIONS = ("广州", "深圳", "香港", "澳门")
 _MAX_ITEMS = 10
 _MAX_WORD_LENGTH = 20
@@ -26,10 +26,10 @@ _SYSTEM_PROMPT = """你是 BriefFlow 的需求理解助手。把用户的需求�
 {"categories": [...], "locations": [...], "keywords": [...], "exclude_keywords": [...]}
 
 约束：
-- categories 只能从 ["金融实习", "经管比赛", "夏令营", "科研机会"] 中选择。
+- categories 只能从 ["实习", "竞赛", "夏令营", "科研", "奖学金", "暑校"] 中选择。
 - locations 只能从 ["广州", "深圳", "香港", "澳门"] 中选择；"广深"指广州和深圳，"港澳"指香港和澳门，"粤港澳"指四城。
 - keywords 是用户感兴趣的方向词（如 金融、券商、投行、FinTech、量化、研究、科技）。逐个保留明确提到的兴趣，不要只提取“金融”而遗漏并列方向。
-- 金融科技可统一为 FinTech，证券公司可统一为券商，投资银行可统一为投行。金融方向同时提到实习和比赛时，categories 同时包含金融实习和经管比赛。
+- 金融科技可统一为 FinTech，证券公司可统一为券商，投资银行可统一为投行。金融方向同时提到实习和比赛时，categories 同时包含实习和竞赛。
 - 本科生/大三是用户的资格诉求，不代表任何机会已经验证资格；不要把它编成地点、类别或已确认资格。
 - exclude_keywords 是用户明确表示不想要的词（"不要/排除/不考虑/避免"等后面的内容）。
 - 用户没有提到的维度一律给空列表。"""

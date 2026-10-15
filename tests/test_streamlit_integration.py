@@ -93,7 +93,7 @@ class StreamlitIntegrationTests(unittest.TestCase):
 
     def test_optional_fields_missing_for_each_source(self):
         for source in (None, 'BriefFlow Mock', 'SQLite', 'Web'):
-            minimal = {'title': '金融实习', 'category': '金融实习', 'location': '广州'}
+            minimal = {'title': '金融实习', 'category': '实习', 'location': '广州'}
             if source:
                 minimal['source'] = source
             before = deepcopy(minimal)
