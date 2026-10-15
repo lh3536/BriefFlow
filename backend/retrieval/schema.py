@@ -5,7 +5,7 @@ import ipaddress
 import re
 from urllib.parse import parse_qsl, urlencode, urlsplit, urlunsplit
 
-CATEGORIES =  {"实习", "竞赛", "夏令营", "科研", "奖学金", "讲座"}
+CATEGORIES =  {"实习", "竞赛", "夏令营", "科研", "奖学金", "暑校"}
 FIELDS = (
     "item_id", "title", "organization", "location", "category", "module", "summary",
     "source", "source_url", "published_at", "deadline", "tags", "requirements",

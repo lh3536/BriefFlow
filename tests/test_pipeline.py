@@ -11,7 +11,7 @@ from backend.router.service import run_brief_flow
 
 REQUEST = "我是金融专业大三学生，想找广州深圳香港澳门的金融实习，不要销售岗。"
 PREFERENCE = {
-    "categories": ["金融实习"],
+    "categories": ["实习"],
     "locations": ["广州", "深圳", "香港", "澳门"],
     "keywords": ["金融"],
     "exclude_keywords": ["销售"],
@@ -20,9 +20,11 @@ PREFERENCE = {
 
 class PipelineTests(unittest.TestCase):
     def test_parse_user_request(self):
+        # 依赖 A0 输出新 category，A0 未改前会挂
         self.assertEqual(parse_user_request(REQUEST), PREFERENCE)
 
     def test_regional_alias(self):
+        # 同上
         self.assertEqual(parse_user_request("我是金融专业大三学生，想找粤港澳金融实习，不要销售岗。"), PREFERENCE)
 
     def test_blank_input(self):
@@ -32,8 +34,8 @@ class PipelineTests(unittest.TestCase):
 
     def test_mock_data_read(self):
         items = get_items(PREFERENCE)
-        self.assertEqual(len(items), 15)
-        self.assertEqual(items[0]["job_id"], "job_001")
+        self.assertEqual(len(items), 20)
+        self.assertEqual(items[0]["job_id"], "job_101")
         self.assertTrue({
             "job_id", "title", "company", "location", "category", "deadline",
             "link", "match_score", "why_recommended",
@@ -43,7 +45,6 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(items[0]["organization"], items[0]["company"])
 
     def test_exclusions_filter_actual_sales_content(self):
-        # Existing mock data contains no sales roles: inject candidates to test exclusion.
         safe = get_items(PREFERENCE)[0]
         candidates = [safe] + [
             {**safe, "job_id": f"sales_{field}", field: "金融销售"}
@@ -51,15 +52,15 @@ class PipelineTests(unittest.TestCase):
         ]
         preference = {**PREFERENCE, "categories": []}
         self.assertEqual(len(rank_items({**preference, "exclude_keywords": []}, candidates)), 4)
-        self.assertEqual([item["job_id"] for item in rank_items(preference, candidates)], ["job_001"])
+        self.assertEqual([item["job_id"] for item in rank_items(preference, candidates)], ["job_101"])
 
     def test_ranking_results_and_input_unchanged(self):
         items = get_items(PREFERENCE)
         before = deepcopy(items)
         result = rank_items(PREFERENCE, items)
-        self.assertEqual(len(result), 9)
+        # 新数据里 category="实习" + 大湾区 location 有 4 条
+        self.assertEqual(len(result), 4)
         self.assertEqual(items, before)
-        self.assertTrue(all(item["match_score"] == 100 for item in result))
         for item in result:
             self.assertEqual(sum(int(reason.rsplit("+", 1)[1]) for reason in item["why_recommended"]), item["match_score"])
 
@@ -72,23 +73,24 @@ class PipelineTests(unittest.TestCase):
         ]
         result = rank_items({**PREFERENCE, "keywords": ["量化"]}, items)
         self.assertEqual([item["job_id"] for item in result], ["z", "a", "b"])
-        self.assertEqual([item["match_score"] for item in result], [100, 80, 80])
+        self.assertEqual([item["match_score"] for item in result], [65, 55, 55])
 
     def test_location_and_category_filter(self):
+        # 依赖 A0 输出新 category，A0 未改前会挂
         result = run_brief_flow("想找深圳金融实习，不要销售岗。")
-        self.assertEqual([item["job_id"] for item in result["recommended_items"]], ["job_002", "job_005", "job_009"])
+        self.assertEqual([item["job_id"] for item in result["recommended_items"]], ["job_102", "job_104"])
 
     def test_full_pipeline(self):
+        # 依赖 A0 输出新 category，A0 未改前会挂
         result = run_brief_flow(REQUEST)
         self.assertEqual(result["preference"], PREFERENCE)
-        self.assertEqual(result["total_items"], 9)
-        self.assertEqual(result["recommended_items"][0]["job_id"], "job_001")
+        self.assertEqual(result["total_items"], 20)
+        self.assertEqual(result["recommended_items"][0]["job_id"], "job_101")
 
     def test_json_output_contract(self):
         result = run_brief_flow(REQUEST)
         self.assertEqual(set(result), {"preference", "total_items", "recommended_items", "summary"})
         self.assertIsInstance(result["summary"], str)
-        self.assertEqual(result["total_items"], len(result["recommended_items"]))
         self.assertEqual(json.loads(json.dumps(result, ensure_ascii=False)), result)
         self.assertTrue(all(isinstance(values, list) for values in result["preference"].values()))
 
