@@ -40,7 +40,7 @@ def parse_ukri_feed(payload: bytes) -> list[dict]:
                 published = raw_date
         items.append({
             "title": entry.findtext("title", ""), "organization": UKRI_SOURCE,
-            "location": "未注明", "category": "科研机会",
+            "location": "未注明", "category": "科研",
             "summary": " ".join(" ".join(parser.parts).split()),
             "source": UKRI_SOURCE, "source_url": entry.findtext("link", ""),
             "published_at": published, "deadline": "", "tags": ["科研资助", "UKRI"],
