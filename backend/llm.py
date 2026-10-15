@@ -10,6 +10,11 @@ Configuration via environment variables or a repo-root .env file:
     BRIEF_LLM_MODEL     - default qwen-plus
     BRIEF_LLM_TIMEOUT   - request timeout in seconds, default 30
     BRIEF_LLM_TEMPERATURE - optional temperature; omitted by default (some models reject 0)
+
+The shared .env loader also carries non-LLM BriefFlow settings so that a single
+repo-root .env drives the whole pipeline:
+    BRIEFFLOW_RETRIEVAL_MODE - mock (default) | database | web
+    BRIEFFLOW_DB_PATH        - SQLite path used by retrieval "database" mode
 """
 from __future__ import annotations
 
@@ -26,7 +31,7 @@ _DEFAULT_TIMEOUT = 30.0
 
 
 def _load_dotenv() -> None:
-    """Populate missing BRIEF_LLM_* variables from a repo-root .env file."""
+    """Populate missing BRIEF_LLM_* / BRIEFFLOW_* variables from a repo-root .env file."""
     env_path = Path(__file__).resolve().parents[1] / ".env"
     try:
         lines = env_path.read_text(encoding="utf-8").splitlines()
@@ -39,7 +44,7 @@ def _load_dotenv() -> None:
         key, _, value = line.partition("=")
         key = key.strip()
         value = value.strip().strip('"').strip("'")
-        if key in {"BRIEF_LLM_API_KEY", "BRIEF_LLM_BASE_URL", "BRIEF_LLM_MODEL", "BRIEF_LLM_TIMEOUT", "BRIEF_LLM_TEMPERATURE"} and key not in os.environ:
+        if (key.startswith("BRIEF_LLM_") or key.startswith("BRIEFFLOW_")) and key not in os.environ:
             os.environ[key] = value
 
 
