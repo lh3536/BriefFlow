@@ -30,10 +30,18 @@ Payment、Email、复杂 Recommendation Model 或 Scheduler。以上方向不属
 
 ## D11 新类别契约同步（2026-10-15）
 
-Retrieval 已适配六个新类别：UKRI 输出由 `科研机会` 改为 `科研`；测试 fixture、20 条
+Retrieval 已适配六个新类别：UKRI 输出由 `科研机会` 改为 `科研`；测试 fixture、60 条
 Mock Data 断言和 SQLite 缓存字段同步更新。SQLite 会兼容升级旧缓存，新增 `module`、
 `disciplines`、`grades`、`time_pref`，其中列表字段继续按 JSON 文本保存并回读。
 
-实测 `pytest tests/test_retrieval.py -q` 为 `29 passed, 11 subtests passed`，Mock 数据校验
-为 `PASS`。PR #4 仍需 A0 Owner 输出新类别，并由 Ranking Owner 处理其分支与当前 `dev`
-的 RC2 评分冲突；在这两项完成且全仓测试通过前，不应合入 `dev`。
+Web 模式继续通过 `fetch_web` 聚合 UKRI、挑战杯、中金所、HKEX、澳门政府新闻局和
+香港证监会；合并冲突不得将入口回退为仅调用 `fetch_ukri`。Round2 与 D10 来源均已
+使用六类别契约。
+
+实测 `pytest tests/test_retrieval.py tests/test_retrieval_round2.py tests/test_retrieval_d10.py -q`
+为 `44 passed, 11 subtests passed`，Mock 数据校验为 `PASS`。加入 `tests/test_rc2.py` 的回归命令
+在完成上述 40 项后停滞，已中止，不能写成全套通过。针对三个改动 Python 文件运行 Ruff
+仍报告 7 项既有格式/风格问题，本次没有借功能修复扩大为全文件格式化。
+
+PR #4 仍需 A0 Owner 输出新类别，并完成其余 Owner 的失败项；在全仓测试可完成且通过前，
+不应合入 `dev`。
