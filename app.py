@@ -477,7 +477,7 @@ def switch_tier_and_resync(new_tier: str):
         # 即使等级相同，如果尚未执行过检索则无需动作
         return
     st.session_state.tier = new_tier
-    st.session_state.show_count_select = 5 if new_tier == "free" else 20
+    st.session_state.show_count_select = 50 if new_tier == "free" else 20
     active_query = (
         st.session_state.get("searched_query")
         or st.session_state.get("query_input")
@@ -834,9 +834,9 @@ if result is not None:
             )
         st.info("暂无匹配机会。可以减少地点限制或调整机会类型后重试。")
     else:
-        # 展示条数根据会员等级自适应：Free 默认 5 条，Plus/Pro 默认 20 条
-        default_idx = 0 if current_tier == "free" else 2
-        show_count = st.selectbox("展示数量", [5, 10, 20], index=default_idx, key="show_count_select")
+        # 展示条数根据会员等级自适应：Free 不限条数（默认展示更多），Plus/Pro 默认 20 条
+        default_idx = 3 if current_tier == "free" else 2
+        show_count = st.selectbox("展示数量", [5, 10, 20, 50], index=default_idx, key="show_count_select")
         st.caption(f"当前展示 {min(show_count, len(items))} / {len(items)} 条 · 保持原始推荐顺序")
         for index, item in enumerate(items[:show_count], 1):
             title = item.get("title") or "未命名机会"

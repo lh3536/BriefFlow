@@ -12,7 +12,7 @@ TIERS = {
         "name": "Free",
         "price": 0,
         "dims": 1,          # 只保留最高优先级 1 个维度（类型）
-        "limit": 5,         # 最多返回 5 条
+        "limit": None,      # 不限条数：差异化靠「维度截断」而非「数量限制」
         "history": 5,
     },
     "plus": {
